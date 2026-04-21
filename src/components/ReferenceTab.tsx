@@ -39,7 +39,7 @@ export function ReferenceTab() {
       });
       return { group: g, rows };
     });
-  }, [q]);
+  }, [q, sortedGroups]);
 
   const totalMatches = useMemo(
     () => filteredGroups.reduce((acc, g) => acc + g.rows.length, 0),
