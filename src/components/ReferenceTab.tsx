@@ -66,19 +66,27 @@ export function ReferenceTab() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  const totalRows = useMemo(() => SQL_GROUPS.reduce((a, g) => a + g.rows.length, 0), []);
+
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[230px_1fr]">
-      <aside className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[220px_1fr]">
+      <aside className="hidden lg:sticky lg:top-20 lg:block lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto lg:pr-1">
         <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           Grupos
         </div>
         <div className="mt-2 flex flex-col gap-0.5">
-          <SidebarLink label="Todos" active={filter === "all"} onClick={() => setFilter("all")} />
+          <SidebarLink
+            label="Todos"
+            count={totalRows}
+            active={filter === "all"}
+            onClick={() => setFilter("all")}
+          />
           {SQL_GROUPS.map((g) => (
             <SidebarLink
               key={g.id}
               label={g.label}
               color={g.color}
+              count={g.rows.length}
               active={filter === g.id}
               onClick={() => setFilter(g.id)}
             />
