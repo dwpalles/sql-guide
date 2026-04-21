@@ -30,7 +30,7 @@ export interface AnalyzedToken {
 
 export interface AnalysisResult {
   tokens: AnalyzedToken[];
-  counts: { ok: number; warn: number; invalid: number; unknown: number; total: number };
+  counts: { ok: number; warn: number; invalid: number; unknown: number; excel: number; total: number };
 }
 
 /**
