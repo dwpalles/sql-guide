@@ -167,6 +167,7 @@ export function PracticeTab() {
   const [answer, setAnswer] = useState("");
   const [feedback, setFeedback] = useState<Feedback>({ state: "idle" });
   const [showSolution, setShowSolution] = useState(false);
+  const [showHint, setShowHint] = useState(false);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
 
   const handleDifficultyChange = (d: Difficulty) => {
