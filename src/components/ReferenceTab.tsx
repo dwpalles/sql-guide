@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Search, X, Database, ChevronDown, Activity } from "lucide-react";
+import { Search, X, Database, ChevronDown, Activity, FileSpreadsheet } from "lucide-react";
 import { SQL_GROUPS, type SqlGroup } from "@/data/sqlCommands";
 import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS } from "@/data/schema";
 import { CodeBlock } from "@/components/CodeBlock";
 import { SqlAnalyzerPanel } from "@/components/SqlAnalyzerPanel";
+import { ExcelSqlPanel } from "@/components/ExcelSqlPanel";
 import { cn } from "@/lib/utils";
 
 const ANALYZER_ID = "analisador";
-type FilterId = "all" | "analisador" | string;
+const EXCEL_ID = "excel";
+type FilterId = "all" | "analisador" | "excel" | string;
 
 export function ReferenceTab() {
   const [filter, setFilter] = useState<FilterId>("all");
@@ -46,8 +48,9 @@ export function ReferenceTab() {
   }, [filteredGroups]);
 
   const showAnalyzer = filter === "all" || filter === ANALYZER_ID;
+  const showExcel = filter === EXCEL_ID;
   const visibleGroups =
-    filter === ANALYZER_ID
+    filter === ANALYZER_ID || filter === EXCEL_ID
       ? []
       : filter === "all"
         ? filteredGroups
@@ -96,7 +99,13 @@ export function ReferenceTab() {
             />
           ))}
           <SidebarLink
-            label="Analisador"
+            label="Excel → SQL"
+            icon={<FileSpreadsheet className="h-3.5 w-3.5 text-[oklch(0.82_0.16_85)]" />}
+            active={filter === EXCEL_ID}
+            onClick={() => setFilter(EXCEL_ID)}
+          />
+          <SidebarLink
+            label="SQL Doctor"
             icon={<Activity className="h-3.5 w-3.5" />}
             active={filter === ANALYZER_ID}
             onClick={() => setFilter(ANALYZER_ID)}
@@ -156,7 +165,14 @@ export function ReferenceTab() {
             />
           ))}
           <FilterPill
-            label="Analisador"
+            label="Excel → SQL"
+            icon={<FileSpreadsheet className="h-3 w-3" />}
+            active={filter === EXCEL_ID}
+            onClick={() => setFilter(EXCEL_ID)}
+            variant="excel"
+          />
+          <FilterPill
+            label="SQL Doctor"
             icon={<Activity className="h-3 w-3" />}
             active={filter === ANALYZER_ID}
             onClick={() => setFilter(ANALYZER_ID)}
@@ -212,6 +228,17 @@ export function ReferenceTab() {
                 Nenhum resultado para “{query}”.
               </div>
             )}
+
+          {showExcel && (
+            <section
+              ref={(el) => {
+                sectionRefs.current[EXCEL_ID] = el;
+              }}
+              className="rounded-lg border border-border bg-card p-5"
+            >
+              <ExcelSqlPanel />
+            </section>
+          )}
 
           {showAnalyzer && (
             <section
@@ -311,17 +338,20 @@ function FilterPill({
   active: boolean;
   onClick: () => void;
   icon?: React.ReactNode;
-  variant?: "analyzer";
+  variant?: "analyzer" | "excel";
 }) {
   // Rosa do code-keyword usado nas descrições/keywords de SQL
   const PINK = "oklch(0.78 0.16 320)";
-  const c = variant === "analyzer" ? PINK : (color ?? "#7d8590");
+  // Dourado/amarelo do badge "Excel → SQL"
+  const GOLD = "oklch(0.82 0.16 85)";
+  const c =
+    variant === "analyzer" ? PINK : variant === "excel" ? GOLD : (color ?? "#7d8590");
 
   let style: React.CSSProperties;
-  if (variant === "analyzer") {
+  if (variant === "analyzer" || variant === "excel") {
     style = active
       ? {
-          // Invertido: fundo rosa, texto/borda pretos
+          // Invertido: fundo colorido, texto/borda pretos
           color: "#000",
           background: c,
           borderColor: "#000",
