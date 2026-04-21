@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Search, X, Database, ChevronDown, Activity } from "lucide-react";
+import { Search, X, Database, ChevronDown, Activity, FileSpreadsheet } from "lucide-react";
 import { SQL_GROUPS, type SqlGroup } from "@/data/sqlCommands";
 import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS } from "@/data/schema";
 import { CodeBlock } from "@/components/CodeBlock";
 import { SqlAnalyzerPanel } from "@/components/SqlAnalyzerPanel";
+import { ExcelSqlPanel } from "@/components/ExcelSqlPanel";
 import { cn } from "@/lib/utils";
 
 const ANALYZER_ID = "analisador";
-type FilterId = "all" | "analisador" | string;
+const EXCEL_ID = "excel";
+type FilterId = "all" | "analisador" | "excel" | string;
 
 export function ReferenceTab() {
   const [filter, setFilter] = useState<FilterId>("all");
