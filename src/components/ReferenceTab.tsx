@@ -74,7 +74,7 @@ export function ReferenceTab() {
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[230px_1fr]">
-      <aside className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
+      <aside className="hidden lg:sticky lg:top-20 lg:block lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
         <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           Grupos
         </div>
