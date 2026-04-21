@@ -13,7 +13,7 @@ export function ReferenceTab() {
   const [filter, setFilter] = useState<FilterId>("all");
   const [query, setQuery] = useState("");
   const [schemaOpen, setSchemaOpen] = useState(false);
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const q = query.trim().toLowerCase();
 
