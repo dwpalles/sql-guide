@@ -99,7 +99,13 @@ export function ReferenceTab() {
             />
           ))}
           <SidebarLink
-            label="Analisador"
+            label="Excel → SQL"
+            icon={<FileSpreadsheet className="h-3.5 w-3.5 text-[oklch(0.82_0.16_85)]" />}
+            active={filter === EXCEL_ID}
+            onClick={() => setFilter(EXCEL_ID)}
+          />
+          <SidebarLink
+            label="SQL Doctor"
             icon={<Activity className="h-3.5 w-3.5" />}
             active={filter === ANALYZER_ID}
             onClick={() => setFilter(ANALYZER_ID)}
