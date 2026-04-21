@@ -331,11 +331,27 @@ export function PracticeTab() {
               <Sparkles className="h-4 w-4" />
               Verificar resposta
             </Button>
+            {current.hint && (
+              <Button variant="secondary" onClick={() => setShowHint((s) => !s)} className="gap-2">
+                <Lightbulb className="h-4 w-4" />
+                {showHint ? "Ocultar dica" : "Ver dica"}
+              </Button>
+            )}
             <Button variant="secondary" onClick={() => setShowSolution((s) => !s)}>
               {showSolution ? "Ocultar solução" : "Ver solução"}
             </Button>
           </div>
         </div>
+
+        {showHint && current.hint && (
+          <div className="flex items-start gap-3 rounded-lg border border-warning/30 bg-warning/10 p-4">
+            <Lightbulb className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
+            <div>
+              <div className="font-semibold text-warning">Dica</div>
+              <p className="mt-1 text-sm text-muted-foreground">{current.hint}</p>
+            </div>
+          </div>
+        )}
 
         {feedback.state === "correct" && (
           <div className="flex items-start gap-3 rounded-lg border border-success/30 bg-success/10 p-4">
