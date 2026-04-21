@@ -12,6 +12,22 @@ const CATEGORY_BADGE_CLASS: Record<SqlCategory, string> = {
   JOIN: "cat-join",
   Agregação: "cat-agregacao",
   Subqueries: "cat-subqueries",
+  Operadores: "cat-operadores",
+  "Funções String": "cat-funcoes-string",
+  "Funções Matemáticas": "cat-funcoes-matematicas",
+  "Funções Data/Hora": "cat-funcoes-data-hora",
+  "Conversão de Tipos": "cat-conversao-de-tipos",
+  Condicionais: "cat-condicionais",
+  "Window Functions": "cat-window-functions",
+  "Set Operations": "cat-set-operations",
+  Constraints: "cat-constraints",
+  Índices: "cat-indices",
+  Views: "cat-views",
+  Transações: "cat-transacoes",
+  "Stored Procedures": "cat-stored-procedures",
+  Triggers: "cat-triggers",
+  "DCL (Permissões)": "cat-dcl-permissoes",
+  Utilitários: "cat-utilitarios",
 };
 
 export function ReferenceTab() {
