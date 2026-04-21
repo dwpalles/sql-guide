@@ -32,28 +32,12 @@ interface Props {
 export function SqlAnalyzerPanel({ onJumpToGroup }: Props) {
   const [code, setCode] = useState("");
   const [analysis, setAnalysis] = useState<ReturnType<typeof analyzeSql> | null>(null);
-  const [excelQuery, setExcelQuery] = useState("");
 
   const explainSteps = useMemo(() => explainSql(code), [code]);
 
   const run = () => setAnalysis(analyzeSql(code));
   const clear = () => { setCode(""); setAnalysis(null); };
 
-  const filteredExcel = useMemo(() => {
-    const q = excelQuery.trim().toLowerCase();
-    const list = q
-      ? EXCEL_TO_SQL.filter(
-          (m) =>
-            m.excel.toLowerCase().includes(q) ||
-            m.sql.toLowerCase().includes(q) ||
-            m.description.toLowerCase().includes(q) ||
-            m.category.toLowerCase().includes(q) ||
-            m.example.toLowerCase().includes(q),
-        )
-      : EXCEL_TO_SQL;
-    // Top 20 primeiro
-    return [...list].sort((a, b) => Number(b.top) - Number(a.top));
-  }, [excelQuery]);
 
   return (
     <div>
