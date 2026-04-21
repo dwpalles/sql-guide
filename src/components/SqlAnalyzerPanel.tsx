@@ -36,6 +36,8 @@ export function SqlAnalyzerPanel({ onJumpToGroup }: Props) {
   const [analysis, setAnalysis] = useState<ReturnType<typeof analyzeSql> | null>(null);
   const [excelQuery, setExcelQuery] = useState("");
 
+  const explainSteps = useMemo(() => explainSql(code), [code]);
+
   const run = () => setAnalysis(analyzeSql(code));
   const clear = () => { setCode(""); setAnalysis(null); };
 
