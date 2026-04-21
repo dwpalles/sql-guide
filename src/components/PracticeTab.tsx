@@ -25,72 +25,120 @@ const EXERCISES: Exercise[] = [
   {
     id: "ex1",
     difficulty: "Iniciante",
-    title: "Listar todos os clientes",
-    description: "Selecione o nome e o email de todos os clientes da tabela `clientes`.",
-    requires: ["select", "nome", "email", "from", "clientes"],
-    solution: `SELECT nome, email FROM clientes;`,
+    title: "Clientes do estado de SP",
+    description: "Liste todos os clientes do estado de SP.",
+    hint: "Use WHERE para filtrar por coluna.",
+    requires: ["select", "from", "clientes", "where", "estado", "sp"],
+    solution: `SELECT * FROM clientes WHERE estado = 'SP';`,
   },
   {
     id: "ex2",
     difficulty: "Iniciante",
-    title: "Produtos caros",
-    description: "Liste todos os produtos com preço maior que 100, ordenados do mais caro para o mais barato.",
-    requires: ["select", "produtos", "where", "preco", ">", "100", "order by"],
-    solution: `SELECT * FROM produtos
-WHERE preco > 100
-ORDER BY preco DESC;`,
+    title: "Top 5 produtos mais caros",
+    description: "Mostre o nome e o preço dos 5 produtos mais caros.",
+    hint: "Combine ORDER BY com LIMIT.",
+    requires: ["select", "nome", "preco", "from", "produtos", "order by", "desc", "limit", "5"],
+    solution: `SELECT nome, preco FROM produtos
+ORDER BY preco DESC
+LIMIT 5;`,
   },
   {
     id: "ex3",
-    difficulty: "Intermediário",
-    title: "Total por cliente",
-    description: "Mostre o nome do cliente e a soma total de seus pedidos. Inclua apenas clientes com pedidos.",
-    requires: ["join", "clientes", "pedidos", "sum", "group by"],
-    solution: `SELECT c.nome, SUM(p.total) AS total_gasto
-FROM clientes c
-JOIN pedidos p ON p.cliente_id = c.id
-GROUP BY c.nome;`,
+    difficulty: "Iniciante",
+    title: "Pedidos entregues",
+    description: "Quantos pedidos têm status 'entregue'?",
+    hint: "COUNT(*) conta todas as linhas.",
+    requires: ["select", "count", "from", "pedidos", "where", "status", "entregue"],
+    solution: `SELECT COUNT(*) FROM pedidos WHERE status = 'entregue';`,
   },
   {
     id: "ex4",
-    difficulty: "Intermediário",
-    title: "Categorias com estoque baixo",
-    description: "Liste o nome de cada categoria e a quantidade de produtos com estoque menor que 10.",
-    requires: ["categorias", "produtos", "join", "count", "group by", "estoque"],
-    solution: `SELECT cat.nome, COUNT(*) AS produtos_baixos
-FROM categorias cat
-JOIN produtos p ON p.categoria_id = cat.id
-WHERE p.estoque < 10
-GROUP BY cat.nome;`,
+    difficulty: "Iniciante",
+    title: "Receita total",
+    description: "Qual é o valor total de todos os pedidos?",
+    hint: "SUM soma valores numéricos.",
+    requires: ["select", "sum", "total", "from", "pedidos"],
+    solution: `SELECT SUM(total) FROM pedidos;`,
   },
   {
     id: "ex5",
-    difficulty: "Avançado",
-    title: "Top 3 clientes do ano",
-    description: "Encontre os 3 clientes que mais gastaram no ano atual. Use uma CTE.",
-    requires: ["with", "sum", "group by", "order by", "limit", "3"],
-    solution: `WITH gastos AS (
-  SELECT cliente_id, SUM(total) AS total_gasto
-  FROM pedidos
-  WHERE EXTRACT(YEAR FROM data_pedido) = EXTRACT(YEAR FROM CURRENT_DATE)
-  GROUP BY cliente_id
-)
-SELECT c.nome, g.total_gasto
-FROM gastos g
-JOIN clientes c ON c.id = g.cliente_id
-ORDER BY g.total_gasto DESC
-LIMIT 3;`,
+    difficulty: "Intermediário",
+    title: "Total gasto por cliente",
+    description: "Liste os clientes e o total gasto por cada um, ordenados do maior para o menor.",
+    hint: "Use JOIN + GROUP BY + SUM.",
+    requires: ["select", "join", "clientes", "pedidos", "sum", "group by", "order by"],
+    solution: `SELECT c.nome, SUM(p.total) AS total_gasto
+FROM clientes c
+JOIN pedidos p ON c.id = p.id_cliente
+GROUP BY c.id, c.nome
+ORDER BY total_gasto DESC;`,
   },
   {
     id: "ex6",
+    difficulty: "Intermediário",
+    title: "Produtos nunca pedidos",
+    description: "Quais produtos nunca foram pedidos?",
+    hint: "LEFT JOIN com WHERE NULL detecta ausências.",
+    requires: ["select", "from", "produtos", "left join", "itens_pedido", "is null"],
+    solution: `SELECT p.nome
+FROM produtos p
+LEFT JOIN itens_pedido ip ON p.id = ip.id_produto
+WHERE ip.id IS NULL;`,
+  },
+  {
+    id: "ex7",
+    difficulty: "Intermediário",
+    title: "Categoria com mais produtos",
+    description: "Qual categoria tem mais produtos? Retorne apenas o nome e o total.",
+    hint: "GROUP BY + COUNT + LIMIT 1.",
+    requires: ["select", "categorias", "join", "produtos", "group by", "order by", "limit", "1"],
+    solution: `SELECT c.nome, COUNT(*) AS total
+FROM categorias c
+JOIN produtos p ON c.id = p.id_categoria
+GROUP BY c.id, c.nome
+ORDER BY total DESC
+LIMIT 1;`,
+  },
+  {
+    id: "ex8",
     difficulty: "Avançado",
-    title: "Produtos nunca vendidos",
-    description: "Liste todos os produtos que nunca apareceram em nenhum item de pedido.",
-    requires: ["produtos", "not", "exists", "itens_pedido"],
-    solution: `SELECT * FROM produtos p
-WHERE NOT EXISTS (
-  SELECT 1 FROM itens_pedido ip WHERE ip.produto_id = p.id
-);`,
+    title: "Clientes acima da média",
+    description: "Liste os clientes que gastaram acima da média geral dos pedidos.",
+    hint: "Subquery dentro do HAVING.",
+    requires: ["select", "join", "pedidos", "group by", "having", "sum", "avg"],
+    solution: `SELECT c.nome, SUM(p.total) AS gasto
+FROM clientes c
+JOIN pedidos p ON c.id = p.id_cliente
+GROUP BY c.id
+HAVING SUM(p.total) > (SELECT AVG(total) FROM pedidos);`,
+  },
+  {
+    id: "ex9",
+    difficulty: "Avançado",
+    title: "Top 3 produtos mais vendidos",
+    description: "Mostre os 3 produtos mais vendidos por quantidade total.",
+    hint: "SUM(quantidade) com JOIN duplo.",
+    requires: ["select", "produtos", "join", "itens_pedido", "sum", "quantidade", "group by", "order by", "limit", "3"],
+    solution: `SELECT pr.nome, SUM(ip.quantidade) AS vendidos
+FROM produtos pr
+JOIN itens_pedido ip ON pr.id = ip.id_produto
+GROUP BY pr.id, pr.nome
+ORDER BY vendidos DESC
+LIMIT 3;`,
+  },
+  {
+    id: "ex10",
+    difficulty: "Avançado",
+    title: "Clientes ativos todos os meses de 2025",
+    description: "Liste os clientes que fizeram pedidos em todos os 12 meses de 2025.",
+    hint: "COUNT DISTINCT com HAVING.",
+    requires: ["select", "clientes", "join", "pedidos", "year", "2025", "group by", "having", "count", "distinct", "month", "12"],
+    solution: `SELECT c.nome
+FROM clientes c
+JOIN pedidos p ON c.id = p.id_cliente
+WHERE YEAR(p.data_pedido) = 2025
+GROUP BY c.id
+HAVING COUNT(DISTINCT MONTH(p.data_pedido)) = 12;`,
   },
 ];
 
