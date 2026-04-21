@@ -118,25 +118,29 @@ export function ReferenceTab() {
 
         {/* Filter pills */}
         <div className="mb-6 flex flex-wrap gap-2">
-          <Button
-            size="sm"
-            variant={activeCategory === "Todos" ? "default" : "secondary"}
+          <button
+            type="button"
             onClick={() => setActiveCategory("Todos")}
-            className="h-7 rounded-full text-xs"
+            data-active={activeCategory === "Todos"}
+            className="cat-pill"
           >
             Todos
-          </Button>
-          {CATEGORIES.map((cat) => (
-            <Button
-              key={cat}
-              size="sm"
-              variant={activeCategory === cat ? "default" : "secondary"}
-              onClick={() => setActiveCategory(cat)}
-              className="h-7 rounded-full text-xs"
-            >
-              {cat}
-            </Button>
-          ))}
+          </button>
+          {CATEGORIES.map((cat) => {
+            const isActive = activeCategory === cat;
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setActiveCategory(cat)}
+                data-active={isActive}
+                className={cn("cat-pill", isActive && CATEGORY_BADGE_CLASS[cat])}
+              >
+                <span className={cn("cat-dot", CATEGORY_BADGE_CLASS[cat])} />
+                {cat}
+              </button>
+            );
+          })}
         </div>
 
         {filtered.length === 0 && (
