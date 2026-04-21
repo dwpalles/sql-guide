@@ -5,8 +5,9 @@ import {
   RELATED_MAP,
   MULTI_PATTERNS,
 } from "@/data/sqlAnalyzerData";
+import { EXCEL_MAP, type ExcelMapping } from "@/data/excelToSql";
 
-export type TokenStatus = "ok" | "warn" | "invalid" | "unknown";
+export type TokenStatus = "ok" | "warn" | "invalid" | "unknown" | "excel";
 
 export interface AnalyzedToken {
   /** the canonical token, normalized to UPPER */
@@ -23,11 +24,13 @@ export interface AnalyzedToken {
   reason?: string;
   /** related commands or suggestions */
   related: string[];
+  /** when status === "excel": full mapping info */
+  excel?: ExcelMapping;
 }
 
 export interface AnalysisResult {
   tokens: AnalyzedToken[];
-  counts: { ok: number; warn: number; invalid: number; unknown: number; total: number };
+  counts: { ok: number; warn: number; invalid: number; unknown: number; excel: number; total: number };
 }
 
 /**
@@ -65,7 +68,7 @@ function tokenizeSQL(input: string): string[] {
     if (!matched) {
       const w = words[i];
       if (!used.has(w)) {
-        if (CMD_INFO[w] || VARIANTS_MAP[w] || INVALID_MAP[w]) {
+        if (CMD_INFO[w] || VARIANTS_MAP[w] || INVALID_MAP[w] || EXCEL_MAP[w]) {
           found.push(w);
           used.add(w);
         }
@@ -109,6 +112,15 @@ export function analyzeSql(input: string): AnalysisResult {
         related: invalid.suggest ?? [],
       };
     }
+    const xl = EXCEL_MAP[t];
+    if (xl) {
+      return {
+        token: t,
+        status: "excel",
+        excel: xl,
+        related: [xl.sql],
+      };
+    }
     return { token: t, status: "unknown", related: [] };
   });
 
@@ -117,6 +129,7 @@ export function analyzeSql(input: string): AnalysisResult {
     warn: result.filter((r) => r.status === "warn").length,
     invalid: result.filter((r) => r.status === "invalid").length,
     unknown: result.filter((r) => r.status === "unknown").length,
+    excel: result.filter((r) => r.status === "excel").length,
     total: result.length,
   };
   return { tokens: result, counts };
