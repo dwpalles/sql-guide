@@ -79,12 +79,18 @@ export function ReferenceTab() {
           Grupos
         </div>
         <div className="mt-2 flex flex-col gap-0.5">
-          <SidebarLink label="Todos" active={filter === "all"} onClick={() => setFilter("all")} />
+          <SidebarLink
+            label="Todos"
+            count={totalMatches}
+            active={filter === "all"}
+            onClick={() => setFilter("all")}
+          />
           {SQL_GROUPS.map((g) => (
             <SidebarLink
               key={g.id}
               label={g.label}
               color={g.color}
+              count={groupCounts[g.id] ?? g.rows.length}
               active={filter === g.id}
               onClick={() => setFilter(g.id)}
             />
