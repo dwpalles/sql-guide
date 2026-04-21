@@ -155,9 +155,9 @@ export function ReferenceTab() {
               <div className="mb-3 flex items-center gap-3">
                 <h2 className="text-lg font-semibold">{cat}</h2>
                 <div className="h-px flex-1 bg-border" />
-                <Badge variant="secondary" className="text-xs">
+                <span className={cn("cat-badge", CATEGORY_BADGE_CLASS[cat])}>
                   {cmds.length}
-                </Badge>
+                </span>
               </div>
               <div className="grid gap-4">
                 {cmds.map((cmd) => (
