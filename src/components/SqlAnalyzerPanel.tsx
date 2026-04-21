@@ -9,12 +9,10 @@ import {
   ArrowUpRight,
   FileSpreadsheet,
   Star,
-  Search,
   BookOpen,
 } from "lucide-react";
 import { analyzeSql, findGroupIdForCommand, type AnalyzedToken } from "@/lib/sqlAnalyzer";
 import { explainSql } from "@/lib/sqlExplainer";
-import { EXCEL_TO_SQL } from "@/data/excelToSql";
 import { CodeBlock } from "@/components/CodeBlock";
 import { cn } from "@/lib/utils";
 
@@ -34,28 +32,12 @@ interface Props {
 export function SqlAnalyzerPanel({ onJumpToGroup }: Props) {
   const [code, setCode] = useState("");
   const [analysis, setAnalysis] = useState<ReturnType<typeof analyzeSql> | null>(null);
-  const [excelQuery, setExcelQuery] = useState("");
 
   const explainSteps = useMemo(() => explainSql(code), [code]);
 
   const run = () => setAnalysis(analyzeSql(code));
   const clear = () => { setCode(""); setAnalysis(null); };
 
-  const filteredExcel = useMemo(() => {
-    const q = excelQuery.trim().toLowerCase();
-    const list = q
-      ? EXCEL_TO_SQL.filter(
-          (m) =>
-            m.excel.toLowerCase().includes(q) ||
-            m.sql.toLowerCase().includes(q) ||
-            m.description.toLowerCase().includes(q) ||
-            m.category.toLowerCase().includes(q) ||
-            m.example.toLowerCase().includes(q),
-        )
-      : EXCEL_TO_SQL;
-    // Top 20 primeiro
-    return [...list].sort((a, b) => Number(b.top) - Number(a.top));
-  }, [excelQuery]);
 
   return (
     <div>
@@ -175,72 +157,6 @@ export function SqlAnalyzerPanel({ onJumpToGroup }: Props) {
         </div>
       )}
 
-      {/* ===== Banco Excel → SQL ===== */}
-      <div className="mt-8">
-        <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h3 className="flex items-center gap-2 text-base font-semibold">
-              <FileSpreadsheet className="h-4 w-4 text-[oklch(0.82_0.16_85)]" />
-              Funções do Excel → SQL
-            </h3>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {EXCEL_TO_SQL.length} funções mapeadas. Pesquise pelo nome Excel, pelo equivalente SQL ou pela descrição.
-              <span className="ml-1 inline-flex items-center gap-1">
-                <Star className="h-3 w-3 fill-[oklch(0.82_0.16_85)] text-[oklch(0.82_0.16_85)]" />
-                = entre as 20 mais usadas.
-              </span>
-            </p>
-          </div>
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-            <input
-              value={excelQuery}
-              onChange={(e) => setExcelQuery(e.target.value)}
-              placeholder="Pesquisar função Excel ou SQL…"
-              className="w-64 rounded-md border border-border bg-secondary/40 py-1.5 pl-8 pr-2 text-sm outline-none focus:border-primary"
-            />
-          </div>
-        </div>
-
-        {filteredExcel.length === 0 ? (
-          <div className="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-            Nenhuma função encontrada para "{excelQuery}".
-          </div>
-        ) : (
-          <div className="overflow-hidden rounded-lg border border-border">
-            <div className="hidden grid-cols-[160px_140px_1fr] gap-4 border-b border-border bg-secondary/40 px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground md:grid">
-              <div>Excel</div>
-              <div>SQL</div>
-              <div>Descrição & exemplo</div>
-            </div>
-            <div className="divide-y divide-border">
-              {filteredExcel.map((m) => (
-                <div key={m.excel} className="grid grid-cols-1 gap-3 px-4 py-3 md:grid-cols-[160px_140px_1fr] md:gap-4">
-                  <div className="flex items-center gap-2">
-                    {m.top && (
-                      <Star className="h-3.5 w-3.5 shrink-0 fill-[oklch(0.82_0.16_85)] text-[oklch(0.82_0.16_85)]" />
-                    )}
-                    <code className="font-mono text-sm font-semibold text-foreground">{m.excel}</code>
-                    <span className="ml-auto rounded border border-border bg-secondary/40 px-1.5 py-0.5 text-[10px] text-muted-foreground md:hidden">
-                      {m.category}
-                    </span>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <code className="font-mono text-sm text-primary">{m.sql}</code>
-                    <span className="hidden text-[10px] text-muted-foreground md:inline">{m.category}</span>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">{m.description}</p>
-                    <div className="mt-2">
-                      <CodeBlock code={m.example} />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
