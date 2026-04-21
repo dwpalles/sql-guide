@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
 import { Search, Database } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { CodeBlock } from "./CodeBlock";
 import { CATEGORIES, SCHEMA_DESCRIPTION, SQL_COMMANDS, type SqlCategory } from "@/data/sqlCommands";
 import { cn } from "@/lib/utils";
@@ -83,12 +81,13 @@ export function ReferenceTab() {
                     document.getElementById(`cat-${cat}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
                   }}
                   className={cn(
-                    "rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-secondary",
+                    "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-secondary",
                     activeCategory === cat && "bg-secondary text-foreground",
                   )}
                 >
-                  {cat}
-                  <span className="ml-2 text-xs text-muted-foreground">{count}</span>
+                  <span className={cn("cat-dot", CATEGORY_BADGE_CLASS[cat])} />
+                  <span className="flex-1">{cat}</span>
+                  <span className="text-xs text-muted-foreground">{count}</span>
                 </a>
               );
             })}
@@ -120,25 +119,29 @@ export function ReferenceTab() {
 
         {/* Filter pills */}
         <div className="mb-6 flex flex-wrap gap-2">
-          <Button
-            size="sm"
-            variant={activeCategory === "Todos" ? "default" : "secondary"}
+          <button
+            type="button"
             onClick={() => setActiveCategory("Todos")}
-            className="h-7 rounded-full text-xs"
+            data-active={activeCategory === "Todos"}
+            className="cat-pill"
           >
             Todos
-          </Button>
-          {CATEGORIES.map((cat) => (
-            <Button
-              key={cat}
-              size="sm"
-              variant={activeCategory === cat ? "default" : "secondary"}
-              onClick={() => setActiveCategory(cat)}
-              className="h-7 rounded-full text-xs"
-            >
-              {cat}
-            </Button>
-          ))}
+          </button>
+          {CATEGORIES.map((cat) => {
+            const isActive = activeCategory === cat;
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setActiveCategory(cat)}
+                data-active={isActive}
+                className={cn("cat-pill", isActive && CATEGORY_BADGE_CLASS[cat])}
+              >
+                <span className={cn("cat-dot", CATEGORY_BADGE_CLASS[cat])} />
+                {cat}
+              </button>
+            );
+          })}
         </div>
 
         {filtered.length === 0 && (
@@ -153,9 +156,9 @@ export function ReferenceTab() {
               <div className="mb-3 flex items-center gap-3">
                 <h2 className="text-lg font-semibold">{cat}</h2>
                 <div className="h-px flex-1 bg-border" />
-                <Badge variant="secondary" className="text-xs">
+                <span className={cn("cat-badge", CATEGORY_BADGE_CLASS[cat])}>
                   {cmds.length}
-                </Badge>
+                </span>
               </div>
               <div className="grid gap-4">
                 {cmds.map((cmd) => (

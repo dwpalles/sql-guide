@@ -164,3 +164,36 @@
 .cat-join       { color: #bc8cff; background: color-mix(in oklab, #bc8cff 14%, transparent); border-color: color-mix(in oklab, #bc8cff 35%, transparent); }
 .cat-agregacao  { color: #d29922; background: color-mix(in oklab, #d29922 14%, transparent); border-color: color-mix(in oklab, #d29922 35%, transparent); }
 .cat-subqueries { color: #ff7b72; background: color-mix(in oklab, #ff7b72 14%, transparent); border-color: color-mix(in oklab, #ff7b72 35%, transparent); }
+
+/* Filter pills (use same color tokens, with active state inverting) */
+.cat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: 1.75rem;
+  padding: 0 0.75rem;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+.cat-pill:hover { filter: brightness(1.15); }
+.cat-pill[data-active="true"] {
+  box-shadow: 0 0 0 1px color-mix(in oklab, currentColor 50%, transparent) inset;
+}
+
+/* Sidebar dots */
+.cat-dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* Color variants reused for pills + dots via the same .cat-* classes already defined */
