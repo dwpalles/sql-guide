@@ -160,6 +160,7 @@ export function ReferenceTab() {
             icon={<Activity className="h-3 w-3" />}
             active={filter === ANALYZER_ID}
             onClick={() => setFilter(ANALYZER_ID)}
+            variant="analyzer"
           />
         </div>
 
@@ -303,31 +304,53 @@ function FilterPill({
   active,
   onClick,
   icon,
+  variant,
 }: {
   label: string;
   color?: string;
   active: boolean;
   onClick: () => void;
   icon?: React.ReactNode;
+  variant?: "analyzer";
 }) {
-  const c = color ?? "#7d8590";
+  // Rosa do code-keyword usado nas descrições/keywords de SQL
+  const PINK = "oklch(0.78 0.16 320)";
+  const c = variant === "analyzer" ? PINK : (color ?? "#7d8590");
+
+  let style: React.CSSProperties;
+  if (variant === "analyzer") {
+    style = active
+      ? {
+          // Invertido: fundo rosa, texto/borda pretos
+          color: "#000",
+          background: c,
+          borderColor: "#000",
+        }
+      : {
+          color: c,
+          background: "transparent",
+          borderColor: c,
+        };
+  } else {
+    style = active
+      ? {
+          // Selecionado: fundo da cor, texto/borda pretos
+          color: "#000",
+          background: c,
+          borderColor: "#000",
+        }
+      : {
+          color: "var(--muted-foreground)",
+          background: "var(--secondary)",
+          borderColor: "var(--border)",
+        };
+  }
+
   return (
     <button
       onClick={onClick}
-      className="inline-flex h-7 items-center gap-1.5 rounded-full border px-3 text-xs font-medium transition"
-      style={
-        active
-          ? {
-              color: c,
-              background: `color-mix(in oklab, ${c} 18%, transparent)`,
-              borderColor: `color-mix(in oklab, ${c} 50%, transparent)`,
-            }
-          : {
-              color: "var(--muted-foreground)",
-              background: "var(--secondary)",
-              borderColor: "var(--border)",
-            }
-      }
+      className="inline-flex h-7 items-center gap-1.5 rounded-full border px-3 text-[11px] font-semibold uppercase tracking-wider transition"
+      style={style}
     >
       {icon}
       {label}
