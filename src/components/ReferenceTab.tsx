@@ -81,12 +81,13 @@ export function ReferenceTab() {
                     document.getElementById(`cat-${cat}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
                   }}
                   className={cn(
-                    "rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-secondary",
+                    "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-secondary",
                     activeCategory === cat && "bg-secondary text-foreground",
                   )}
                 >
-                  {cat}
-                  <span className="ml-2 text-xs text-muted-foreground">{count}</span>
+                  <span className={cn("cat-dot", CATEGORY_BADGE_CLASS[cat])} />
+                  <span className="flex-1">{cat}</span>
+                  <span className="text-xs text-muted-foreground">{count}</span>
                 </a>
               );
             })}
