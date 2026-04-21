@@ -9,12 +9,10 @@ import {
   ArrowUpRight,
   FileSpreadsheet,
   Star,
-  Search,
   BookOpen,
 } from "lucide-react";
 import { analyzeSql, findGroupIdForCommand, type AnalyzedToken } from "@/lib/sqlAnalyzer";
 import { explainSql } from "@/lib/sqlExplainer";
-import { EXCEL_TO_SQL } from "@/data/excelToSql";
 import { CodeBlock } from "@/components/CodeBlock";
 import { cn } from "@/lib/utils";
 
