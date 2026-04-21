@@ -338,17 +338,20 @@ function FilterPill({
   active: boolean;
   onClick: () => void;
   icon?: React.ReactNode;
-  variant?: "analyzer";
+  variant?: "analyzer" | "excel";
 }) {
   // Rosa do code-keyword usado nas descrições/keywords de SQL
   const PINK = "oklch(0.78 0.16 320)";
-  const c = variant === "analyzer" ? PINK : (color ?? "#7d8590");
+  // Dourado/amarelo do badge "Excel → SQL"
+  const GOLD = "oklch(0.82 0.16 85)";
+  const c =
+    variant === "analyzer" ? PINK : variant === "excel" ? GOLD : (color ?? "#7d8590");
 
   let style: React.CSSProperties;
-  if (variant === "analyzer") {
+  if (variant === "analyzer" || variant === "excel") {
     style = active
       ? {
-          // Invertido: fundo rosa, texto/borda pretos
+          // Invertido: fundo colorido, texto/borda pretos
           color: "#000",
           background: c,
           borderColor: "#000",
