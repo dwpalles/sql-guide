@@ -177,6 +177,7 @@ export function PracticeTab() {
     setAnswer("");
     setFeedback({ state: "idle" });
     setShowSolution(false);
+    setShowHint(false);
   };
 
   const handleSelect = (id: string) => {
@@ -184,6 +185,7 @@ export function PracticeTab() {
     setAnswer("");
     setFeedback({ state: "idle" });
     setShowSolution(false);
+    setShowHint(false);
   };
 
   const handleSubmit = () => {
@@ -201,6 +203,7 @@ export function PracticeTab() {
     setAnswer("");
     setFeedback({ state: "idle" });
     setShowSolution(false);
+    setShowHint(false);
   };
 
   const total = EXERCISES.length;
