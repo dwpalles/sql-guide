@@ -76,6 +76,53 @@ export function SqlAnalyzerPanel({ onJumpToGroup }: Props) {
         className="min-h-[160px] w-full rounded-lg border border-border bg-code-bg p-3 font-mono text-sm leading-relaxed text-foreground outline-none focus:border-primary"
       />
 
+      {/* Explicação automática em tempo real */}
+      <div className="mt-3 rounded-lg border border-border bg-card/40">
+        <div className="flex items-center gap-2 border-b border-border px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <BookOpen className="h-3.5 w-3.5 text-primary" />
+          Explicação passo a passo
+          {explainSteps.length > 0 && (
+            <span className="ml-auto rounded-full bg-secondary/60 px-2 py-0.5 font-mono text-[10px] tabular-nums text-muted-foreground">
+              {explainSteps.length} cláusula{explainSteps.length === 1 ? "" : "s"}
+            </span>
+          )}
+        </div>
+
+        {explainSteps.length === 0 ? (
+          <p className="px-3 py-4 text-xs text-muted-foreground">
+            Comece a digitar uma query (SELECT, INSERT, UPDATE, DELETE, CREATE…) e cada cláusula será explicada aqui automaticamente, com contexto do schema e-commerce.
+          </p>
+        ) : (
+          <ol className="divide-y divide-border">
+            {explainSteps.map((s, i) => (
+              <li key={i} className="grid grid-cols-[28px_1fr] gap-3 px-3 py-3">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 font-mono text-[11px] font-semibold text-primary">
+                  {i + 1}
+                </div>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-baseline gap-2">
+                    <span className="rounded-md border border-primary/30 bg-primary/10 px-1.5 py-0.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-primary">
+                      {s.clause}
+                    </span>
+                    <code className="break-all font-mono text-[11px] text-muted-foreground">
+                      {s.snippet}
+                    </code>
+                  </div>
+                  <p className="mt-1.5 text-xs leading-relaxed text-foreground">
+                    {s.explanation}
+                  </p>
+                  {s.context && (
+                    <p className="mt-1 text-[11px] italic text-muted-foreground">
+                      🗄️ {s.context}
+                    </p>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <button
           onClick={run}
