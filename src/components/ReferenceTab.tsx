@@ -7,6 +7,15 @@ import { CodeBlock } from "./CodeBlock";
 import { CATEGORIES, SCHEMA_DESCRIPTION, SQL_COMMANDS, type SqlCategory } from "@/data/sqlCommands";
 import { cn } from "@/lib/utils";
 
+const CATEGORY_BADGE_CLASS: Record<SqlCategory, string> = {
+  DDL: "cat-ddl",
+  DML: "cat-dml",
+  SELECT: "cat-select",
+  JOIN: "cat-join",
+  Agregação: "cat-agregacao",
+  Subqueries: "cat-subqueries",
+};
+
 export function ReferenceTab() {
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<SqlCategory | "Todos">("Todos");
@@ -158,9 +167,9 @@ export function ReferenceTab() {
                       <h3 className="font-mono text-base font-semibold text-foreground">
                         {cmd.name}
                       </h3>
-                      <Badge variant="outline" className="text-[10px] uppercase tracking-wider">
+                      <span className={cn("cat-badge", CATEGORY_BADGE_CLASS[cmd.category])}>
                         {cmd.category}
-                      </Badge>
+                      </span>
                     </header>
 
                     <p className="mb-3 text-sm text-muted-foreground">{cmd.description}</p>
