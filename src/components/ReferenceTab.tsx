@@ -19,8 +19,13 @@ export function ReferenceTab() {
 
   const q = query.trim().toLowerCase();
 
+  const sortedGroups = useMemo(
+    () => [...SQL_GROUPS].sort((a, b) => a.label.localeCompare(b.label, "pt-BR")),
+    [],
+  );
+
   const filteredGroups = useMemo(() => {
-    return SQL_GROUPS.map((g) => {
+    return sortedGroups.map((g) => {
       const groupMatches =
         !q || g.label.toLowerCase().includes(q) || g.full.toLowerCase().includes(q);
       const rows = g.rows.filter((r) => {
