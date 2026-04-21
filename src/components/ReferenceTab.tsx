@@ -48,8 +48,9 @@ export function ReferenceTab() {
   }, [filteredGroups]);
 
   const showAnalyzer = filter === "all" || filter === ANALYZER_ID;
+  const showExcel = filter === EXCEL_ID;
   const visibleGroups =
-    filter === ANALYZER_ID
+    filter === ANALYZER_ID || filter === EXCEL_ID
       ? []
       : filter === "all"
         ? filteredGroups
