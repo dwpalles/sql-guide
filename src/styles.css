@@ -164,6 +164,22 @@
 .cat-join       { color: #bc8cff; background: color-mix(in oklab, #bc8cff 14%, transparent); border-color: color-mix(in oklab, #bc8cff 35%, transparent); }
 .cat-agregacao  { color: #d29922; background: color-mix(in oklab, #d29922 14%, transparent); border-color: color-mix(in oklab, #d29922 35%, transparent); }
 .cat-subqueries { color: #ff7b72; background: color-mix(in oklab, #ff7b72 14%, transparent); border-color: color-mix(in oklab, #ff7b72 35%, transparent); }
+.cat-operadores       { color: #79c0ff; background: color-mix(in oklab, #79c0ff 14%, transparent); border-color: color-mix(in oklab, #79c0ff 35%, transparent); }
+.cat-funcoes-string   { color: #3fb950; background: color-mix(in oklab, #3fb950 14%, transparent); border-color: color-mix(in oklab, #3fb950 35%, transparent); }
+.cat-funcoes-matematicas { color: #f85149; background: color-mix(in oklab, #f85149 14%, transparent); border-color: color-mix(in oklab, #f85149 35%, transparent); }
+.cat-funcoes-data-hora   { color: #bc8cff; background: color-mix(in oklab, #bc8cff 14%, transparent); border-color: color-mix(in oklab, #bc8cff 35%, transparent); }
+.cat-conversao-de-tipos  { color: #f0883e; background: color-mix(in oklab, #f0883e 14%, transparent); border-color: color-mix(in oklab, #f0883e 35%, transparent); }
+.cat-condicionais        { color: #e3b341; background: color-mix(in oklab, #e3b341 14%, transparent); border-color: color-mix(in oklab, #e3b341 35%, transparent); }
+.cat-window-functions    { color: #56d4dd; background: color-mix(in oklab, #56d4dd 14%, transparent); border-color: color-mix(in oklab, #56d4dd 35%, transparent); }
+.cat-set-operations      { color: #ffa657; background: color-mix(in oklab, #ffa657 14%, transparent); border-color: color-mix(in oklab, #ffa657 35%, transparent); }
+.cat-constraints         { color: #ff9492; background: color-mix(in oklab, #ff9492 14%, transparent); border-color: color-mix(in oklab, #ff9492 35%, transparent); }
+.cat-indices             { color: #a5d6ff; background: color-mix(in oklab, #a5d6ff 14%, transparent); border-color: color-mix(in oklab, #a5d6ff 35%, transparent); }
+.cat-views               { color: #d2a8ff; background: color-mix(in oklab, #d2a8ff 14%, transparent); border-color: color-mix(in oklab, #d2a8ff 35%, transparent); }
+.cat-transacoes          { color: #7ee787; background: color-mix(in oklab, #7ee787 14%, transparent); border-color: color-mix(in oklab, #7ee787 35%, transparent); }
+.cat-stored-procedures   { color: #ffa198; background: color-mix(in oklab, #ffa198 14%, transparent); border-color: color-mix(in oklab, #ffa198 35%, transparent); }
+.cat-triggers            { color: #ff7b72; background: color-mix(in oklab, #ff7b72 14%, transparent); border-color: color-mix(in oklab, #ff7b72 35%, transparent); }
+.cat-dcl-permissoes      { color: #f778ba; background: color-mix(in oklab, #f778ba 14%, transparent); border-color: color-mix(in oklab, #f778ba 35%, transparent); }
+.cat-utilitarios         { color: #8b949e; background: color-mix(in oklab, #8b949e 14%, transparent); border-color: color-mix(in oklab, #8b949e 35%, transparent); }
 
 /* Filter pills (use same color tokens, with active state inverting) */
 .cat-pill {
