@@ -229,6 +229,17 @@ export function ReferenceTab() {
               </div>
             )}
 
+          {showExcel && (
+            <section
+              ref={(el) => {
+                sectionRefs.current[EXCEL_ID] = el;
+              }}
+              className="rounded-lg border border-border bg-card p-5"
+            >
+              <ExcelSqlPanel />
+            </section>
+          )}
+
           {showAnalyzer && (
             <section
               ref={(el) => {
