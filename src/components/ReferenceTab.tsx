@@ -39,6 +39,12 @@ export function ReferenceTab() {
     [filteredGroups],
   );
 
+  const groupCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const { group, rows } of filteredGroups) map[group.id] = rows.length;
+    return map;
+  }, [filteredGroups]);
+
   const showAnalyzer = filter === "all" || filter === ANALYZER_ID;
   const visibleGroups =
     filter === ANALYZER_ID
