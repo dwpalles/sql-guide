@@ -167,9 +167,9 @@ export function ReferenceTab() {
                       <h3 className="font-mono text-base font-semibold text-foreground">
                         {cmd.name}
                       </h3>
-                      <Badge variant="outline" className="text-[10px] uppercase tracking-wider">
+                      <span className={cn("cat-badge", CATEGORY_BADGE_CLASS[cmd.category])}>
                         {cmd.category}
-                      </Badge>
+                      </span>
                     </header>
 
                     <p className="mb-3 text-sm text-muted-foreground">{cmd.description}</p>
