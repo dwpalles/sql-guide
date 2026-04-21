@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
 import { Search, Database } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { CodeBlock } from "./CodeBlock";
 import { CATEGORIES, SCHEMA_DESCRIPTION, SQL_COMMANDS, type SqlCategory } from "@/data/sqlCommands";
 import { cn } from "@/lib/utils";
