@@ -165,7 +165,14 @@ export function ReferenceTab() {
             />
           ))}
           <FilterPill
-            label="Analisador"
+            label="Excel → SQL"
+            icon={<FileSpreadsheet className="h-3 w-3" />}
+            active={filter === EXCEL_ID}
+            onClick={() => setFilter(EXCEL_ID)}
+            variant="excel"
+          />
+          <FilterPill
+            label="SQL Doctor"
             icon={<Activity className="h-3 w-3" />}
             active={filter === ANALYZER_ID}
             onClick={() => setFilter(ANALYZER_ID)}
