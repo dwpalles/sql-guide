@@ -9,8 +9,7 @@ export type SqlCategory =
   | "Funções String"
   | "Funções Matemáticas"
   | "Funções Data/Hora"
-  | "Conversão de Tipos"
-  | "Condicionais"
+  | "Conversão"
   | "Window Functions"
   | "Set Operations"
   | "Constraints"
@@ -42,8 +41,7 @@ export const CATEGORIES: SqlCategory[] = [
   "Funções String",
   "Funções Matemáticas",
   "Funções Data/Hora",
-  "Conversão de Tipos",
-  "Condicionais",
+  "Conversão",
   "Window Functions",
   "Set Operations",
   "Constraints",
@@ -304,6 +302,30 @@ WHERE id IN (
   SELECT id_cliente FROM pedidos WHERE total > 500
 );`,
     ],
+    [
+      "CTEs encadeadas",
+      "Múltiplas CTEs em sequência",
+      `WITH gastos AS (
+  SELECT id_cliente, SUM(total) AS gasto
+  FROM pedidos
+  GROUP BY id_cliente
+), top10 AS (
+  SELECT * FROM gastos ORDER BY gasto DESC LIMIT 10
+)
+SELECT c.nome, t.gasto
+FROM top10 t
+JOIN clientes c ON c.id = t.id_cliente;`,
+    ],
+    [
+      "WITH RECURSIVE",
+      "CTE recursiva (hierarquias / sequências)",
+      `WITH RECURSIVE numeros AS (
+  SELECT 1 AS n
+  UNION ALL
+  SELECT n + 1 FROM numeros WHERE n < 12
+)
+SELECT n AS mes FROM numeros;`,
+    ],
   ]),
   ...build("Operadores", [
     ["= (igual)", "Comparação de igualdade", "SELECT * FROM produtos WHERE id_categoria = 2;"],
@@ -362,16 +384,20 @@ WHERE EXISTS (SELECT 1 FROM pedidos p WHERE p.id_cliente = c.id);`],
     ["LAST_DAY()", "Último dia do mês", "SELECT LAST_DAY(data_pedido) FROM pedidos;"],
     ["DAYOFWEEK()", "Dia da semana (1=Domingo)", "SELECT DAYOFWEEK(data_pedido) FROM pedidos;"],
   ]),
-  ...build("Conversão de Tipos", [
-    ["CAST()", "Converter para outro tipo", "SELECT CAST(preco AS CHAR) FROM produtos;"],
-    ["CONVERT()", "Converter tipo (sintaxe alternativa)", "SELECT CONVERT(total, DECIMAL(10,2)) FROM pedidos;"],
-    ["CAST AS DATE", "Converter string para DATE", "SELECT CAST('2026-04-21' AS DATE);"],
-    ["CAST AS DECIMAL", "Converter para decimal", "SELECT CAST('199.90' AS DECIMAL(10,2));"],
-  ]),
-  ...build("Condicionais", [
+  ...build("Conversão", [
+    ["CAST()", "Converter valor para outro tipo", "SELECT CAST(preco AS CHAR) FROM produtos;"],
+    ["CONVERT()", "Sintaxe alternativa de conversão", "SELECT CONVERT(total, DECIMAL(10,2)) FROM pedidos;"],
+    ["COALESCE()", "Primeiro valor não-nulo da lista", "SELECT COALESCE(email, telefone, 'sem contato') FROM clientes;"],
+    ["NULLIF()", "Retorna NULL se os valores forem iguais", "SELECT NULLIF(estoque, 0) FROM produtos;"],
+    ["ISNULL() / IFNULL()", "Substitui NULL por valor padrão", "SELECT IFNULL(email, 'sem-email') FROM clientes;"],
+    ["IF()", "Condição ternária inline", "SELECT nome, IF(estoque = 0, 'Esgotado', 'Disponível') FROM produtos;"],
+    ["GREATEST()", "Maior valor de uma lista", "SELECT GREATEST(preco, 10) FROM produtos;"],
+    ["LEAST()", "Menor valor de uma lista", "SELECT LEAST(preco, 1000) FROM produtos;"],
+    ["FORMAT()", "Formatar número com separadores", "SELECT FORMAT(total, 2) FROM pedidos;"],
+    ["JSON_EXTRACT()", "Extrair campo de coluna JSON", "SELECT JSON_EXTRACT(metadados, '$.cor') FROM produtos;"],
     [
       "CASE WHEN",
-      "Lógica condicional inline",
+      "Lógica condicional em múltiplos ramos",
       `SELECT nome,
   CASE
     WHEN total > 500 THEN 'Alto'
@@ -380,12 +406,27 @@ WHERE EXISTS (SELECT 1 FROM pedidos p WHERE p.id_cliente = c.id);`],
   END AS faixa
 FROM pedidos;`,
     ],
-    ["IF()", "Condição ternária", "SELECT nome, IF(estoque = 0, 'Esgotado', 'Disponível') FROM produtos;"],
-    ["IFNULL()", "Substitui NULL por valor padrão", "SELECT IFNULL(email, 'sem-email') FROM clientes;"],
-    ["COALESCE()", "Primeiro valor não-nulo", "SELECT COALESCE(email, telefone, 'sem contato') FROM clientes;"],
-    ["NULLIF()", "Retorna NULL se valores iguais", "SELECT NULLIF(estoque, 0) FROM produtos;"],
   ]),
   ...build("Window Functions", [
+    [
+      "OVER ()",
+      "Define a janela de cálculo da função",
+      "SELECT nome, total, SUM(total) OVER () AS total_geral FROM pedidos;",
+    ],
+    [
+      "PARTITION BY",
+      "Divide a janela em grupos",
+      `SELECT nome, preco,
+  AVG(preco) OVER (PARTITION BY id_categoria) AS media_categoria
+FROM produtos;`,
+    ],
+    [
+      "ORDER BY dentro de OVER",
+      "Ordena linhas dentro da janela",
+      `SELECT data_pedido, total,
+  SUM(total) OVER (ORDER BY data_pedido) AS acumulado
+FROM pedidos;`,
+    ],
     [
       "ROW_NUMBER()",
       "Número sequencial por partição",
@@ -394,18 +435,50 @@ FROM pedidos;`,
 FROM produtos;`,
     ],
     [
-      "RANK() / DENSE_RANK()",
-      "Ranking de registros",
-      `SELECT nome, total,
-  RANK() OVER (ORDER BY total DESC) AS posicao
-FROM pedidos;`,
+      "RANK()",
+      "Ranking com gaps em empates",
+      "SELECT nome, total, RANK() OVER (ORDER BY total DESC) AS posicao FROM pedidos;",
     ],
     [
-      "LAG() / LEAD()",
-      "Acessar linha anterior/seguinte",
+      "DENSE_RANK()",
+      "Ranking sem gaps em empates",
+      "SELECT nome, total, DENSE_RANK() OVER (ORDER BY total DESC) AS posicao FROM pedidos;",
+    ],
+    [
+      "NTILE()",
+      "Divide os resultados em N grupos iguais",
+      "SELECT nome, total, NTILE(4) OVER (ORDER BY total) AS quartil FROM pedidos;",
+    ],
+    [
+      "LAG()",
+      "Acessa o valor da linha anterior",
       `SELECT data_pedido, total,
   LAG(total) OVER (ORDER BY data_pedido) AS pedido_anterior
 FROM pedidos;`,
+    ],
+    [
+      "LEAD()",
+      "Acessa o valor da próxima linha",
+      `SELECT data_pedido, total,
+  LEAD(total) OVER (ORDER BY data_pedido) AS proximo
+FROM pedidos;`,
+    ],
+    [
+      "FIRST_VALUE()",
+      "Primeiro valor da janela",
+      `SELECT nome, preco,
+  FIRST_VALUE(nome) OVER (PARTITION BY id_categoria ORDER BY preco DESC) AS mais_caro
+FROM produtos;`,
+    ],
+    [
+      "LAST_VALUE()",
+      "Último valor da janela",
+      `SELECT nome, preco,
+  LAST_VALUE(nome) OVER (
+    PARTITION BY id_categoria ORDER BY preco
+    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+  ) AS mais_caro
+FROM produtos;`,
     ],
     [
       "SUM() OVER",
@@ -415,9 +488,11 @@ FROM pedidos;`,
 FROM pedidos;`,
     ],
     [
-      "NTILE()",
-      "Dividir em N grupos iguais",
-      "SELECT nome, total, NTILE(4) OVER (ORDER BY total) AS quartil FROM pedidos;",
+      "AVG() OVER",
+      "Média móvel / por janela",
+      `SELECT data_pedido, total,
+  AVG(total) OVER (ORDER BY data_pedido ROWS 6 PRECEDING) AS media_7d
+FROM pedidos;`,
     ],
   ]),
   ...build("Set Operations", [
@@ -458,13 +533,36 @@ SELECT id_cliente FROM pedidos;`,
     ["CHECK", "Validação por condição", "ALTER TABLE produtos ADD CONSTRAINT chk_preco CHECK (preco >= 0);"],
     ["DEFAULT", "Valor padrão da coluna", "ALTER TABLE pedidos ALTER status SET DEFAULT 'pendente';"],
     ["AUTO_INCREMENT", "Incremento automático", "ALTER TABLE clientes MODIFY id INT AUTO_INCREMENT;"],
+    [
+      "ON DELETE CASCADE",
+      "Apagar filhos ao apagar o pai",
+      `ALTER TABLE itens_pedido
+ADD CONSTRAINT fk_itens_pedido
+FOREIGN KEY (id_pedido) REFERENCES pedidos(id)
+ON DELETE CASCADE;`,
+    ],
+    [
+      "ON UPDATE CASCADE",
+      "Propagar UPDATE da PK para a FK",
+      `ALTER TABLE pedidos
+ADD CONSTRAINT fk_pedidos_cliente
+FOREIGN KEY (id_cliente) REFERENCES clientes(id)
+ON UPDATE CASCADE;`,
+    ],
+    [
+      "ADD CONSTRAINT",
+      "Adicionar constraint nomeada",
+      "ALTER TABLE produtos ADD CONSTRAINT chk_estoque CHECK (estoque >= 0);",
+    ],
   ]),
   ...build("Índices", [
     ["CREATE INDEX", "Criar índice simples", "CREATE INDEX idx_estado ON clientes(estado);"],
     ["CREATE UNIQUE INDEX", "Índice único", "CREATE UNIQUE INDEX idx_email ON clientes(email);"],
     ["CREATE INDEX (composto)", "Índice em múltiplas colunas", "CREATE INDEX idx_cli_data ON pedidos(id_cliente, data_pedido);"],
     ["DROP INDEX", "Remover índice", "DROP INDEX idx_estado ON clientes;"],
+    ["EXPLAIN", "Analisar plano de execução de uma query", "EXPLAIN SELECT * FROM pedidos WHERE id_cliente = 5;"],
     ["SHOW INDEX", "Listar índices da tabela", "SHOW INDEX FROM pedidos;"],
+    ["ANALYZE TABLE", "Atualizar estatísticas do otimizador", "ANALYZE TABLE pedidos;"],
   ]),
   ...build("Views", [
     [
@@ -518,6 +616,34 @@ DELIMITER ;`,
       `CREATE FUNCTION fn_desconto(preco DECIMAL(10,2))
 RETURNS DECIMAL(10,2) DETERMINISTIC
 RETURN preco * 0.9;`,
+    ],
+    [
+      "DECLARE / SET",
+      "Declarar e atribuir variáveis locais",
+      `DELIMITER //
+CREATE PROCEDURE sp_calc()
+BEGIN
+  DECLARE v_total DECIMAL(10,2);
+  SET v_total = (SELECT SUM(total) FROM pedidos);
+  SELECT v_total;
+END //
+DELIMITER ;`,
+    ],
+    [
+      "IF / ELSEIF / ELSE",
+      "Fluxo condicional dentro de procedures",
+      `DELIMITER //
+CREATE PROCEDURE sp_classifica(IN p_total DECIMAL(10,2))
+BEGIN
+  IF p_total > 500 THEN
+    SELECT 'Alto';
+  ELSEIF p_total > 100 THEN
+    SELECT 'Médio';
+  ELSE
+    SELECT 'Baixo';
+  END IF;
+END //
+DELIMITER ;`,
     ],
   ]),
   ...build("Triggers", [
