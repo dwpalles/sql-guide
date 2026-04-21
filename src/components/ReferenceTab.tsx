@@ -255,12 +255,14 @@ function SidebarLink({
   active,
   onClick,
   icon,
+  count,
 }: {
   label: string;
   color?: string;
   active: boolean;
   onClick: () => void;
   icon?: React.ReactNode;
+  count?: number;
 }) {
   return (
     <button
@@ -278,7 +280,19 @@ function SidebarLink({
           style={{ background: color ?? "var(--muted-foreground)" }}
         />
       )}
-      {label}
+      <span className="flex-1 truncate">{label}</span>
+      {typeof count === "number" && (
+        <span
+          className={cn(
+            "ml-auto rounded-full px-1.5 py-0.5 text-[10px] font-mono tabular-nums",
+            active
+              ? "bg-background/60 text-foreground"
+              : "bg-secondary/60 text-muted-foreground",
+          )}
+        >
+          {count}
+        </span>
+      )}
     </button>
   );
 }
