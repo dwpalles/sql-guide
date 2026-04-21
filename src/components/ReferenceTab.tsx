@@ -140,7 +140,7 @@ export function ReferenceTab() {
 
         {schemaOpen && <SchemaPanel />}
 
-        <div className="mb-5 flex flex-wrap gap-1.5">
+        <div className="mb-5 flex flex-wrap gap-1.5 lg:hidden">
           <FilterPill label="Todos" active={filter === "all"} onClick={() => setFilter("all")} />
           {SQL_GROUPS.map((g) => (
             <FilterPill
