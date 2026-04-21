@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { CodeBlock } from "./CodeBlock";
+import { SqlAnalyzer } from "./SqlAnalyzer";
 import { SCHEMA_DESCRIPTION } from "@/data/sqlCommands";
 import { cn } from "@/lib/utils";
 
@@ -395,6 +396,8 @@ export function PracticeTab() {
             <CodeBlock code={current.solution} />
           </div>
         )}
+
+        <SqlAnalyzer />
       </div>
     </div>
   );
