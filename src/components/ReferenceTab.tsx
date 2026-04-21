@@ -7,6 +7,15 @@ import { CodeBlock } from "./CodeBlock";
 import { CATEGORIES, SCHEMA_DESCRIPTION, SQL_COMMANDS, type SqlCategory } from "@/data/sqlCommands";
 import { cn } from "@/lib/utils";
 
+const CATEGORY_BADGE_CLASS: Record<SqlCategory, string> = {
+  DDL: "cat-ddl",
+  DML: "cat-dml",
+  SELECT: "cat-select",
+  JOIN: "cat-join",
+  Agregação: "cat-agregacao",
+  Subqueries: "cat-subqueries",
+};
+
 export function ReferenceTab() {
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<SqlCategory | "Todos">("Todos");
