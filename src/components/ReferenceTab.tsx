@@ -39,6 +39,12 @@ export function ReferenceTab() {
     [filteredGroups],
   );
 
+  const groupCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const { group, rows } of filteredGroups) map[group.id] = rows.length;
+    return map;
+  }, [filteredGroups]);
+
   const showAnalyzer = filter === "all" || filter === ANALYZER_ID;
   const visibleGroups =
     filter === ANALYZER_ID
@@ -73,12 +79,18 @@ export function ReferenceTab() {
           Grupos
         </div>
         <div className="mt-2 flex flex-col gap-0.5">
-          <SidebarLink label="Todos" active={filter === "all"} onClick={() => setFilter("all")} />
+          <SidebarLink
+            label="Todos"
+            count={totalMatches}
+            active={filter === "all"}
+            onClick={() => setFilter("all")}
+          />
           {SQL_GROUPS.map((g) => (
             <SidebarLink
               key={g.id}
               label={g.label}
               color={g.color}
+              count={groupCounts[g.id] ?? g.rows.length}
               active={filter === g.id}
               onClick={() => setFilter(g.id)}
             />
@@ -132,7 +144,7 @@ export function ReferenceTab() {
 
         {schemaOpen && <SchemaPanel />}
 
-        <div className="mb-5 flex flex-wrap gap-1.5">
+        <div className="mb-5 flex flex-wrap gap-1.5 lg:hidden">
           <FilterPill label="Todos" active={filter === "all"} onClick={() => setFilter("all")} />
           {SQL_GROUPS.map((g) => (
             <FilterPill
@@ -243,12 +255,14 @@ function SidebarLink({
   active,
   onClick,
   icon,
+  count,
 }: {
   label: string;
   color?: string;
   active: boolean;
   onClick: () => void;
   icon?: React.ReactNode;
+  count?: number;
 }) {
   return (
     <button
@@ -266,7 +280,19 @@ function SidebarLink({
           style={{ background: color ?? "var(--muted-foreground)" }}
         />
       )}
-      {label}
+      <span className="flex-1 truncate">{label}</span>
+      {typeof count === "number" && (
+        <span
+          className={cn(
+            "ml-auto rounded-full px-1.5 py-0.5 text-[10px] font-mono tabular-nums",
+            active
+              ? "bg-background/60 text-foreground"
+              : "bg-secondary/60 text-muted-foreground",
+          )}
+        >
+          {count}
+        </span>
+      )}
     </button>
   );
 }
