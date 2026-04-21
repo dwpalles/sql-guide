@@ -19,8 +19,13 @@ export function ReferenceTab() {
 
   const q = query.trim().toLowerCase();
 
+  const sortedGroups = useMemo(
+    () => [...SQL_GROUPS].sort((a, b) => a.label.localeCompare(b.label, "pt-BR")),
+    [],
+  );
+
   const filteredGroups = useMemo(() => {
-    return SQL_GROUPS.map((g) => {
+    return sortedGroups.map((g) => {
       const groupMatches =
         !q || g.label.toLowerCase().includes(q) || g.full.toLowerCase().includes(q);
       const rows = g.rows.filter((r) => {
@@ -34,7 +39,7 @@ export function ReferenceTab() {
       });
       return { group: g, rows };
     });
-  }, [q]);
+  }, [q, sortedGroups]);
 
   const totalMatches = useMemo(
     () => filteredGroups.reduce((acc, g) => acc + g.rows.length, 0),
@@ -88,7 +93,7 @@ export function ReferenceTab() {
             active={filter === "all"}
             onClick={() => setFilter("all")}
           />
-          {SQL_GROUPS.map((g) => (
+          {sortedGroups.map((g) => (
             <SidebarLink
               key={g.id}
               label={g.label}
@@ -155,7 +160,7 @@ export function ReferenceTab() {
 
         <div className="mb-5 flex flex-wrap gap-1.5 lg:hidden">
           <FilterPill label="Todos" active={filter === "all"} onClick={() => setFilter("all")} />
-          {SQL_GROUPS.map((g) => (
+          {sortedGroups.map((g) => (
             <FilterPill
               key={g.id}
               label={g.label}

@@ -498,7 +498,7 @@ export const SQL_GROUPS: SqlGroup[] = [
   },
   {
     "id": "string",
-    "label": "String",
+    "label": "TEXTO",
     "full": "8. Funções de String",
     "note": "Manipular, transformar, cortar e buscar padrões em textos.",
     "color": "#3fb950",
@@ -808,7 +808,7 @@ export const SQL_GROUPS: SqlGroup[] = [
   },
   {
     "id": "joins",
-    "label": "JOINs",
+    "label": "JOIN'S",
     "full": "13. JOINs — Combinações de Tabelas",
     "note": "Diferentes formas de combinar dados de duas ou mais tabelas.",
     "color": "#bc8cff",
@@ -858,7 +858,7 @@ export const SQL_GROUPS: SqlGroup[] = [
   },
   {
     "id": "subquery",
-    "label": "Subqueries",
+    "label": "SUBCONSULTAS",
     "full": "14. Subqueries (Subconsultas)",
     "note": "Consultas dentro de consultas — escalares, de tabela, correlacionadas, EXISTS.",
     "color": "#f0883e",
@@ -918,7 +918,7 @@ export const SQL_GROUPS: SqlGroup[] = [
   },
   {
     "id": "window",
-    "label": "Window Fn",
+    "label": "FUNÇÕES DE JANELA",
     "full": "15. Window Functions (Funções de Janela)",
     "note": "Funções analíticas que operam sobre janelas de linhas sem colapsar o resultado.",
     "color": "#58a6ff",
@@ -1018,7 +1018,7 @@ export const SQL_GROUPS: SqlGroup[] = [
   },
   {
     "id": "views",
-    "label": "Views",
+    "label": "VIEW'S",
     "full": "17. Views",
     "note": "Consultas salvas como objetos do banco, reutilizáveis como tabelas.",
     "color": "#f0883e",
@@ -1053,7 +1053,7 @@ export const SQL_GROUPS: SqlGroup[] = [
   },
   {
     "id": "procedures",
-    "label": "Procedures",
+    "label": "PROCEDIMENTOS",
     "full": "18. Stored Procedures e Functions",
     "note": "Blocos de código SQL reutilizáveis armazenados no banco.",
     "color": "#f85149",
@@ -1113,7 +1113,7 @@ export const SQL_GROUPS: SqlGroup[] = [
   },
   {
     "id": "triggers",
-    "label": "Triggers",
+    "label": "GATILHOS",
     "full": "19. Triggers",
     "note": "Código disparado automaticamente em resposta a INSERT, UPDATE ou DELETE.",
     "color": "#bc8cff",
@@ -1203,7 +1203,7 @@ export const SQL_GROUPS: SqlGroup[] = [
   },
   {
     "id": "constraints",
-    "label": "Constraints",
+    "label": "RESTRIÇÕES",
     "full": "21. Constraints (Restrições)",
     "note": "Regras aplicadas às colunas para garantir qualidade e consistência dos dados.",
     "color": "#58a6ff",
