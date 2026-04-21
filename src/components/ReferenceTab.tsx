@@ -160,6 +160,7 @@ export function ReferenceTab() {
             icon={<Activity className="h-3 w-3" />}
             active={filter === ANALYZER_ID}
             onClick={() => setFilter(ANALYZER_ID)}
+            variant="analyzer"
           />
         </div>
 
