@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { CheckCircle2, XCircle, Sparkles, RotateCcw } from "lucide-react";
+import { CheckCircle2, XCircle, Sparkles, RotateCcw, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
