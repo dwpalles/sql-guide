@@ -40,7 +40,7 @@ function Index() {
               to="/"
               className="rounded-md border border-primary bg-primary/15 px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary"
             >
-              SQL.ref
+              CÓDIGOS
             </Link>
             <Link
               to="/treino"

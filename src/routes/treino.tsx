@@ -36,7 +36,7 @@ function TreinoPage() {
               to="/"
               className="rounded-md px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
-              SQL.ref
+              CÓDIGOS
             </Link>
             <Link
               to="/treino"
