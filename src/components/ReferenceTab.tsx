@@ -192,6 +192,9 @@ export function ReferenceTab() {
 }
 
 function SectionHeader({ group }: { group: SqlGroup }) {
+  const { lang } = useI18n();
+  const fullText = groupFull(group, lang);
+  const noteText = groupNote(group, lang);
   return (
     <div className="mb-3 flex flex-wrap items-center gap-3">
       <span
@@ -205,9 +208,9 @@ function SectionHeader({ group }: { group: SqlGroup }) {
         {group.label}
       </span>
       <h3 className="text-base font-semibold text-foreground">
-        {group.full.replace(/^\d+\.\s*/, "")}
+        {fullText.replace(/^\d+\.\s*/, "")}
       </h3>
-      <span className="hidden text-xs text-muted-foreground sm:inline">— {group.note}</span>
+      <span className="hidden text-xs text-muted-foreground sm:inline">— {noteText}</span>
     </div>
   );
 }
