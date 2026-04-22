@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Database, ChevronDown, Activity, FileSpreadsheet } from "lucide-react";
 import { SQL_GROUPS, type SqlGroup } from "@/data/sqlCommands";
 import { groupFull, groupNote, rowDescription } from "@/data/sqlCommandsI18n";
