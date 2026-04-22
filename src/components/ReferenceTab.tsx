@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Search, X, Database, ChevronDown, Activity, FileSpreadsheet } from "lucide-react";
+import { useRef, useState } from "react";
+import { Database, ChevronDown, Activity, FileSpreadsheet } from "lucide-react";
 import { SQL_GROUPS, type SqlGroup } from "@/data/sqlCommands";
 import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS } from "@/data/schema";
 import { CodeBlock } from "@/components/CodeBlock";
@@ -9,146 +9,82 @@ import { cn } from "@/lib/utils";
 
 const ANALYZER_ID = "analisador";
 const EXCEL_ID = "excel";
-type FilterId = "all" | "analisador" | "excel" | string;
+type FilterId = "analisador" | "excel" | string;
+
+// Cor rosa do code-keyword usada para o SQL Doctor.
+const PINK = "oklch(0.78 0.16 320)";
+// Dourado/amarelo do Excel.
+const GOLD = "oklch(0.82 0.16 85)";
 
 export function ReferenceTab() {
-  const [filter, setFilter] = useState<FilterId>("all");
-  const [query, setQuery] = useState("");
+  // SQL Doctor é a tela de entrada por padrão (primeiro item da sidebar).
+  const [filter, setFilter] = useState<FilterId>(ANALYZER_ID);
   const [schemaOpen, setSchemaOpen] = useState(false);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
-  const q = query.trim().toLowerCase();
+  // Grupos ordenados alfabeticamente; comandos dentro de cada grupo também A→Z.
+  const sortedGroups = [...SQL_GROUPS]
+    .map((g) => ({
+      ...g,
+      rows: [...g.rows].sort((a, b) => a.name.localeCompare(b.name, "pt-BR")),
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));
 
-  const sortedGroups = useMemo(
-    () => [...SQL_GROUPS].sort((a, b) => a.label.localeCompare(b.label, "pt-BR")),
-    [],
-  );
-
-  const filteredGroups = useMemo(() => {
-    return sortedGroups.map((g) => {
-      const groupMatches =
-        !q || g.label.toLowerCase().includes(q) || g.full.toLowerCase().includes(q);
-      const rows = g.rows.filter((r) => {
-        if (!q) return true;
-        if (groupMatches) return true;
-        return (
-          r.name.toLowerCase().includes(q) ||
-          r.description.toLowerCase().includes(q) ||
-          r.example.toLowerCase().includes(q)
-        );
-      });
-      return { group: g, rows };
-    });
-  }, [q, sortedGroups]);
-
-  const totalMatches = useMemo(
-    () => filteredGroups.reduce((acc, g) => acc + g.rows.length, 0),
-    [filteredGroups],
-  );
-
-  const groupCounts = useMemo(() => {
-    const map: Record<string, number> = {};
-    for (const { group, rows } of filteredGroups) map[group.id] = rows.length;
-    return map;
-  }, [filteredGroups]);
-
-  const showAnalyzer = filter === "all" || filter === ANALYZER_ID;
+  const showAnalyzer = filter === ANALYZER_ID;
   const showExcel = filter === EXCEL_ID;
   const visibleGroups =
     filter === ANALYZER_ID || filter === EXCEL_ID
       ? []
-      : filter === "all"
-        ? filteredGroups
-        : filteredGroups.filter((g) => g.group.id === filter);
+      : sortedGroups.filter((g) => g.id === filter);
 
   const jumpToGroup = (id: string) => {
-    setFilter("all");
+    setFilter(id);
     setTimeout(() => {
       sectionRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 50);
   };
 
-  const searchRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        searchRef.current?.focus();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[230px_1fr]">
       <aside className="hidden lg:sticky lg:top-20 lg:block lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
         <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Grupos
+          Categorias
         </div>
         <div className="mt-2 flex flex-col gap-0.5">
           <SidebarLink
-            label="Todos"
-            count={totalMatches}
-            active={filter === "all"}
-            onClick={() => setFilter("all")}
+            label="SQL DOCTOR"
+            icon={<Activity className="h-3.5 w-3.5" style={{ color: PINK }} />}
+            active={filter === ANALYZER_ID}
+            onClick={() => setFilter(ANALYZER_ID)}
+            bold
+            colorOverride={PINK}
+          />
+          <SidebarLink
+            label="EXCEL → SQL"
+            icon={<FileSpreadsheet className="h-3.5 w-3.5" style={{ color: GOLD }} />}
+            active={filter === EXCEL_ID}
+            onClick={() => setFilter(EXCEL_ID)}
+            bold
+            colorOverride={GOLD}
           />
           {sortedGroups.map((g) => (
             <SidebarLink
               key={g.id}
-              label={g.label}
+              label={g.label.toUpperCase()}
               color={g.color}
-              count={groupCounts[g.id] ?? g.rows.length}
+              count={g.rows.length}
               active={filter === g.id}
               onClick={() => setFilter(g.id)}
             />
           ))}
-          <SidebarLink
-            label="Excel → SQL"
-            icon={<FileSpreadsheet className="h-3.5 w-3.5 text-[oklch(0.82_0.16_85)]" />}
-            active={filter === EXCEL_ID}
-            onClick={() => setFilter(EXCEL_ID)}
-          />
-          <SidebarLink
-            label="SQL Doctor"
-            icon={<Activity className="h-3.5 w-3.5" />}
-            active={filter === ANALYZER_ID}
-            onClick={() => setFilter(ANALYZER_ID)}
-          />
         </div>
       </aside>
 
       <div className="min-w-0">
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <div className="relative min-w-0 flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              ref={searchRef}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Procurar comando, descrição, exemplo… (⌘K)"
-              className="w-full rounded-lg border border-border bg-secondary/40 py-2 pl-9 pr-9 text-sm outline-none placeholder:text-muted-foreground focus:border-primary"
-            />
-            {query && (
-              <button
-                onClick={() => setQuery("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground hover:bg-border hover:text-foreground"
-                aria-label="Limpar busca"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
-
-          {q && (
-            <span className="text-xs text-muted-foreground">
-              {totalMatches} resultado{totalMatches === 1 ? "" : "s"}
-            </span>
-          )}
-
           <button
             onClick={() => setSchemaOpen((o) => !o)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-secondary/40 px-3 py-2 text-xs font-medium text-foreground hover:border-primary"
+            className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-border bg-secondary/40 px-3 py-2 text-xs font-medium text-foreground hover:border-primary"
           >
             <Database className="h-3.5 w-3.5" />
             Schema E-commerce
@@ -159,80 +95,68 @@ export function ReferenceTab() {
         {schemaOpen && <SchemaPanel />}
 
         <div className="mb-5 flex flex-wrap gap-1.5 lg:hidden">
-          <FilterPill label="Todos" active={filter === "all"} onClick={() => setFilter("all")} />
-          {sortedGroups.map((g) => (
-            <FilterPill
-              key={g.id}
-              label={g.label}
-              color={g.color}
-              active={filter === g.id}
-              onClick={() => setFilter(g.id)}
-            />
-          ))}
           <FilterPill
-            label="Excel → SQL"
-            icon={<FileSpreadsheet className="h-3 w-3" />}
-            active={filter === EXCEL_ID}
-            onClick={() => setFilter(EXCEL_ID)}
-            variant="excel"
-          />
-          <FilterPill
-            label="SQL Doctor"
+            label="SQL DOCTOR"
             icon={<Activity className="h-3 w-3" />}
             active={filter === ANALYZER_ID}
             onClick={() => setFilter(ANALYZER_ID)}
             variant="analyzer"
           />
+          <FilterPill
+            label="EXCEL → SQL"
+            icon={<FileSpreadsheet className="h-3 w-3" />}
+            active={filter === EXCEL_ID}
+            onClick={() => setFilter(EXCEL_ID)}
+            variant="excel"
+          />
+          {sortedGroups.map((g) => (
+            <FilterPill
+              key={g.id}
+              label={g.label.toUpperCase()}
+              color={g.color}
+              active={filter === g.id}
+              onClick={() => setFilter(g.id)}
+            />
+          ))}
         </div>
 
         <div className="space-y-8">
-          {visibleGroups.map(({ group, rows }) => {
-            if (rows.length === 0 && q) return null;
-            return (
-              <section
-                key={group.id}
-                ref={(el) => {
-                  sectionRefs.current[group.id] = el;
-                }}
-              >
-                <SectionHeader group={group} />
-                <div className="overflow-hidden rounded-lg border border-border">
-                  <table className="w-full text-sm">
-                    <thead className="bg-secondary/40 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      <tr>
-                        <th className="w-[28%] px-4 py-2 text-left">Comando</th>
-                        <th className="w-[32%] px-4 py-2 text-left">Descrição</th>
-                        <th className="px-4 py-2 text-left">Exemplo</th>
+          {visibleGroups.map((group) => (
+            <section
+              key={group.id}
+              ref={(el) => {
+                sectionRefs.current[group.id] = el;
+              }}
+            >
+              <SectionHeader group={group} />
+              <div className="overflow-hidden rounded-lg border border-border">
+                <table className="w-full text-sm">
+                  <thead className="bg-secondary/40 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    <tr>
+                      <th className="w-[28%] px-4 py-2 text-left">Comando</th>
+                      <th className="w-[32%] px-4 py-2 text-left">Descrição</th>
+                      <th className="px-4 py-2 text-left">Exemplo</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {group.rows.map((r, i) => (
+                      <tr key={i} className="align-top">
+                        <td className="px-4 py-3">
+                          <code className="font-mono text-sm font-semibold text-foreground">
+                            {r.name}
+                          </code>
+                        </td>
+                        <td className="px-4 py-3 text-muted-foreground">{r.description}</td>
+                        <td className="px-4 py-3">
+                          <CodeBlock code={r.example} />
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                      {rows.map((r, i) => (
-                        <tr key={i} className="align-top">
-                          <td className="px-4 py-3">
-                            <code className="font-mono text-sm font-semibold text-foreground">
-                              {r.name}
-                            </code>
-                          </td>
-                          <td className="px-4 py-3 text-muted-foreground">{r.description}</td>
-                          <td className="px-4 py-3">
-                            <CodeBlock code={r.example} />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </section>
-            );
-          })}
-
-          {visibleGroups.length > 0 &&
-            q &&
-            visibleGroups.every((g) => g.rows.length === 0) && (
-              <div className="rounded-md border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-                Nenhum resultado para “{query}”.
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            )}
+            </section>
+          ))}
 
           {showExcel && (
             <section
@@ -289,6 +213,8 @@ function SidebarLink({
   onClick,
   icon,
   count,
+  bold,
+  colorOverride,
 }: {
   label: string;
   color?: string;
@@ -296,16 +222,20 @@ function SidebarLink({
   onClick: () => void;
   icon?: React.ReactNode;
   count?: number;
+  bold?: boolean;
+  colorOverride?: string;
 }) {
   return (
     <button
       onClick={onClick}
       className={cn(
-        "group flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs font-medium transition",
+        "group flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs uppercase tracking-wider transition",
+        bold ? "font-bold" : "font-medium",
         active
           ? "bg-secondary text-foreground"
           : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground",
       )}
+      style={colorOverride && !active ? { color: colorOverride } : undefined}
     >
       {icon ?? (
         <span
@@ -345,35 +275,17 @@ function FilterPill({
   icon?: React.ReactNode;
   variant?: "analyzer" | "excel";
 }) {
-  // Rosa do code-keyword usado nas descrições/keywords de SQL
-  const PINK = "oklch(0.78 0.16 320)";
-  // Dourado/amarelo do badge "Excel → SQL"
-  const GOLD = "oklch(0.82 0.16 85)";
   const c =
     variant === "analyzer" ? PINK : variant === "excel" ? GOLD : (color ?? "#7d8590");
 
   let style: React.CSSProperties;
   if (variant === "analyzer" || variant === "excel") {
     style = active
-      ? {
-          // Invertido: fundo colorido, texto/borda pretos
-          color: "#000",
-          background: c,
-          borderColor: "#000",
-        }
-      : {
-          color: c,
-          background: "transparent",
-          borderColor: c,
-        };
+      ? { color: "#000", background: c, borderColor: "#000" }
+      : { color: c, background: "transparent", borderColor: c };
   } else {
     style = active
-      ? {
-          // Selecionado: fundo da cor, texto/borda pretos
-          color: "#000",
-          background: c,
-          borderColor: "#000",
-        }
+      ? { color: "#000", background: c, borderColor: "#000" }
       : {
           color: "var(--muted-foreground)",
           background: "var(--secondary)",
