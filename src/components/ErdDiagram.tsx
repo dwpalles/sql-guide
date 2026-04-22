@@ -40,7 +40,7 @@ export function ErdDiagram() {
     if (!hovered) return new Set<string>();
     const set = new Set<string>();
     // Hovered a table directly
-    if (SCHEMA_TABLES.some((t) => t.name === hovered)) {
+    if (SCHEMA_TABLES.some((tbl) => tbl.name === hovered)) {
       set.add(hovered);
       // also light up any table connected to it
       for (const e of EDGES) {
