@@ -129,15 +129,17 @@ export function ReferenceTab() {
             onClick={() => setFilter(EXCEL_ID)}
             variant="excel"
           />
-          {sortedGroups.map((g) => (
-            <FilterPill
-              key={g.id}
-              label={g.label.toUpperCase()}
-              color={g.color}
-              active={filter === g.id}
-              onClick={() => setFilter(g.id)}
-            />
-          ))}
+          {/* Group pills only visible on tablet (md) and up; hidden on phones (<768px). */}
+          {!isMobile &&
+            sortedGroups.map((g) => (
+              <FilterPill
+                key={g.id}
+                label={g.label.toUpperCase()}
+                color={g.color}
+                active={filter === g.id}
+                onClick={() => setFilter(g.id)}
+              />
+            ))}
         </div>
 
         <div className="space-y-8">
