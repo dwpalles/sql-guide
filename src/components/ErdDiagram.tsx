@@ -1,14 +1,24 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useMemo, useState } from "react";
+import { ArrowRight, KeyRound, Link2 } from "lucide-react";
 import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS } from "@/data/schema";
 import { cn } from "@/lib/utils";
 
-// Parse "tabela.coluna → tabela.coluna" relationships into structured form.
+// Each table gets its own distinct color so FK badges and table headers visually match.
+const TABLE_COLORS: Record<string, string> = {
+  clientes: "oklch(0.78 0.16 240)", // azul
+  categorias: "oklch(0.80 0.16 320)", // rosa/magenta
+  produtos: "oklch(0.82 0.17 85)", // amarelo
+  pedidos: "oklch(0.78 0.17 150)", // verde
+  itens_pedido: "oklch(0.78 0.17 30)", // laranja
+};
+
 interface Edge {
   fromTable: string;
   fromCol: string;
   toTable: string;
   toCol: string;
 }
+
 const EDGES: Edge[] = SCHEMA_RELATIONSHIPS.map((r) => {
   const [left, right] = r.split("→").map((s) => s.trim());
   const [fromTable, fromCol] = left.split(".");
@@ -16,162 +26,201 @@ const EDGES: Edge[] = SCHEMA_RELATIONSHIPS.map((r) => {
   return { fromTable, fromCol, toTable, toCol };
 });
 
-interface AnchorRect {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-}
+// Build a quick lookup: "tabela.coluna" -> Edge (only FK columns have one).
+const EDGE_BY_FK = new Map<string, Edge>();
+for (const e of EDGES) EDGE_BY_FK.set(`${e.fromTable}.${e.fromCol}`, e);
 
 export function ErdDiagram() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const tableRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const colRefs = useRef<Record<string, HTMLLIElement | null>>({});
-  const [, force] = useState(0);
+  // hovered = either a table name OR a "tabela.coluna" key — both highlight related items.
+  const [hovered, setHovered] = useState<string | null>(null);
 
-  // Recompute on resize / mount.
-  useLayoutEffect(() => {
-    const onResize = () => force((n) => n + 1);
-    onResize();
-    window.addEventListener("resize", onResize);
-    const ro = new ResizeObserver(onResize);
-    if (containerRef.current) ro.observe(containerRef.current);
-    return () => {
-      window.removeEventListener("resize", onResize);
-      ro.disconnect();
-    };
-  }, []);
+  const highlightedTables = useMemo(() => {
+    if (!hovered) return new Set<string>();
+    const set = new Set<string>();
+    // Hovered a table directly
+    if (SCHEMA_TABLES.some((t) => t.name === hovered)) {
+      set.add(hovered);
+      // also light up any table connected to it
+      for (const e of EDGES) {
+        if (e.fromTable === hovered) set.add(e.toTable);
+        if (e.toTable === hovered) set.add(e.fromTable);
+      }
+      return set;
+    }
+    // Hovered an FK column "tabela.coluna"
+    const edge = EDGE_BY_FK.get(hovered);
+    if (edge) {
+      set.add(edge.fromTable);
+      set.add(edge.toTable);
+    }
+    return set;
+  }, [hovered]);
 
-  useEffect(() => {
-    const id = requestAnimationFrame(() => force((n) => n + 1));
-    return () => cancelAnimationFrame(id);
-  }, []);
+  const isTableHighlighted = (name: string) =>
+    highlightedTables.size === 0 ? false : highlightedTables.has(name);
+  const isTableDimmed = (name: string) =>
+    highlightedTables.size > 0 && !highlightedTables.has(name);
 
-  const container = containerRef.current?.getBoundingClientRect();
-
-  const getRect = (el: HTMLElement | null): AnchorRect | null => {
-    if (!el || !container) return null;
-    const r = el.getBoundingClientRect();
-    return {
-      left: r.left - container.left,
-      top: r.top - container.top,
-      width: r.width,
-      height: r.height,
-    };
+  const scrollToTable = (name: string) => {
+    const el = document.getElementById(`erd-table-${name}`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
   };
-
-  const lines = container
-    ? EDGES.map((e, i) => {
-        const fromCol = getRect(colRefs.current[`${e.fromTable}.${e.fromCol}`]);
-        const toCol = getRect(colRefs.current[`${e.toTable}.${e.toCol}`]);
-        const fromTable = getRect(tableRefs.current[e.fromTable]);
-        const toTable = getRect(tableRefs.current[e.toTable]);
-        if (!fromCol || !toCol || !fromTable || !toTable) return null;
-
-        // Decide which side of each table to anchor to (closer side).
-        const fromCenter = fromTable.left + fromTable.width / 2;
-        const toCenter = toTable.left + toTable.width / 2;
-        const fromOnRight = toCenter > fromCenter;
-        const toOnRight = !fromOnRight;
-
-        const x1 = fromOnRight ? fromTable.left + fromTable.width : fromTable.left;
-        const y1 = fromCol.top + fromCol.height / 2;
-        const x2 = toOnRight ? toTable.left + toTable.width : toTable.left;
-        const y2 = toCol.top + toCol.height / 2;
-
-        // Curved bezier with horizontal handles.
-        const dx = Math.max(40, Math.abs(x2 - x1) * 0.5);
-        const c1x = fromOnRight ? x1 + dx : x1 - dx;
-        const c2x = toOnRight ? x2 + dx : x2 - dx;
-        const path = `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;
-
-        return { i, path, x2, y2, toOnRight };
-      }).filter(Boolean)
-    : [];
 
   return (
     <div className="flex h-full flex-col">
       <div className="mb-3">
         <h2 className="text-sm font-semibold text-foreground">Schema E-commerce</h2>
         <p className="text-xs text-muted-foreground">
-          Diagrama ERD · 🔑 PK · 🔗 FK · setas = relacionamentos
+          Diagrama ERD · 🔑 PK · 🔗 FK · passe o mouse para destacar relacionamentos
         </p>
       </div>
 
-      <div ref={containerRef} className="relative">
-        {/* SVG layer for relationship arrows */}
-        <svg
-          className="pointer-events-none absolute inset-0 h-full w-full"
-          style={{ overflow: "visible" }}
-          aria-hidden
-        >
-          <defs>
-            <marker
-              id="erd-arrow"
-              viewBox="0 0 10 10"
-              refX="9"
-              refY="5"
-              markerWidth="7"
-              markerHeight="7"
-              orient="auto-start-reverse"
+      {/* Legenda visual de relacionamentos */}
+      <div className="mb-4 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+        {EDGES.map((e, i) => {
+          const key = `${e.fromTable}.${e.fromCol}`;
+          const active = hovered === key || hovered === e.fromTable || hovered === e.toTable;
+          return (
+            <button
+              key={i}
+              type="button"
+              onMouseEnter={() => setHovered(key)}
+              onMouseLeave={() => setHovered(null)}
+              onClick={() => scrollToTable(e.toTable)}
+              className={cn(
+                "group flex items-center gap-2 rounded-md border bg-card px-2 py-1.5 text-left text-[11px] transition-all",
+                active
+                  ? "border-primary shadow-sm"
+                  : "border-border hover:border-primary/60",
+              )}
             >
-              <path d="M0,0 L10,5 L0,10 z" fill="var(--primary)" />
-            </marker>
-          </defs>
-          {lines.map(
-            (l) =>
-              l && (
-                <path
-                  key={l.i}
-                  d={l.path}
-                  fill="none"
-                  stroke="var(--primary)"
-                  strokeWidth={1.5}
-                  strokeOpacity={0.75}
-                  markerEnd="url(#erd-arrow)"
-                />
-              ),
-          )}
-        </svg>
+              <span
+                className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-mono font-semibold"
+                style={{
+                  color: TABLE_COLORS[e.fromTable],
+                  background: `color-mix(in oklab, ${TABLE_COLORS[e.fromTable]} 14%, transparent)`,
+                }}
+              >
+                {e.fromTable}
+                <span className="text-foreground/60">.{e.fromCol}</span>
+              </span>
+              <ArrowRight className="h-3 w-3 shrink-0 text-muted-foreground" />
+              <span
+                className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-mono font-semibold"
+                style={{
+                  color: TABLE_COLORS[e.toTable],
+                  background: `color-mix(in oklab, ${TABLE_COLORS[e.toTable]} 14%, transparent)`,
+                }}
+              >
+                {e.toTable}
+                <span className="text-foreground/60">.{e.toCol}</span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
 
-        <div className="relative grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {SCHEMA_TABLES.map((t) => (
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {SCHEMA_TABLES.map((t) => {
+          const color = TABLE_COLORS[t.name] ?? "var(--primary)";
+          const highlighted = isTableHighlighted(t.name);
+          const dimmed = isTableDimmed(t.name);
+          return (
             <div
               key={t.name}
-              ref={(el) => {
-                tableRefs.current[t.name] = el;
-              }}
-              className="rounded-md border border-border bg-code-bg p-3 shadow-sm"
+              id={`erd-table-${t.name}`}
+              onMouseEnter={() => setHovered(t.name)}
+              onMouseLeave={() => setHovered(null)}
+              className={cn(
+                "rounded-md border bg-code-bg p-3 shadow-sm transition-all",
+                highlighted
+                  ? "scale-[1.01] border-transparent ring-2"
+                  : "border-border",
+                dimmed && "opacity-40",
+              )}
+              style={
+                highlighted
+                  ? ({
+                      ["--tw-ring-color" as string]: color,
+                      borderColor: color,
+                    } as React.CSSProperties)
+                  : undefined
+              }
             >
-              <div className="mb-2 border-b border-border pb-1.5 font-mono text-sm font-semibold text-primary">
-                {t.name}
+              <div
+                className="mb-2 flex items-center justify-between border-b pb-1.5 font-mono text-sm font-semibold"
+                style={{
+                  color,
+                  borderColor: `color-mix(in oklab, ${color} 30%, transparent)`,
+                }}
+              >
+                <span>{t.name}</span>
+                <span
+                  className="inline-block h-2 w-2 rounded-full"
+                  style={{ background: color }}
+                  aria-hidden
+                />
               </div>
               <ul className="flex flex-col gap-1">
-                {t.columns.map((c) => (
-                  <li
-                    key={c.name}
-                    ref={(el) => {
-                      colRefs.current[`${t.name}.${c.name}`] = el;
-                    }}
-                    className={cn(
-                      "flex items-center gap-1.5 font-mono text-[11px]",
-                      c.kind === "pk"
-                        ? "text-warning"
-                        : c.kind === "fk"
-                          ? "text-primary"
-                          : "text-muted-foreground",
-                    )}
-                  >
-                    <span className="w-3">
-                      {c.kind === "pk" ? "🔑" : c.kind === "fk" ? "🔗" : "·"}
-                    </span>
-                    {c.name}
-                  </li>
-                ))}
+                {t.columns.map((c) => {
+                  const colKey = `${t.name}.${c.name}`;
+                  const edge = EDGE_BY_FK.get(colKey);
+                  const isFkHovered = hovered === colKey;
+                  return (
+                    <li
+                      key={c.name}
+                      onMouseEnter={(e) => {
+                        if (edge) {
+                          e.stopPropagation();
+                          setHovered(colKey);
+                        }
+                      }}
+                      className={cn(
+                        "flex items-center gap-1.5 rounded px-1 py-0.5 font-mono text-[11px] transition-colors",
+                        c.kind === "pk"
+                          ? "text-warning"
+                          : c.kind === "fk"
+                            ? "text-primary"
+                            : "text-muted-foreground",
+                        isFkHovered && "bg-primary/10",
+                      )}
+                    >
+                      <span className="w-3 shrink-0">
+                        {c.kind === "pk" ? (
+                          <KeyRound className="h-3 w-3 text-warning" />
+                        ) : c.kind === "fk" ? (
+                          <Link2 className="h-3 w-3 text-primary" />
+                        ) : (
+                          <span className="text-muted-foreground">·</span>
+                        )}
+                      </span>
+                      <span className="font-semibold">{c.name}</span>
+                      {edge && (
+                        <button
+                          type="button"
+                          onClick={(ev) => {
+                            ev.stopPropagation();
+                            scrollToTable(edge.toTable);
+                          }}
+                          className="ml-auto inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-semibold transition-all hover:scale-105"
+                          style={{
+                            color: TABLE_COLORS[edge.toTable],
+                            background: `color-mix(in oklab, ${TABLE_COLORS[edge.toTable]} 16%, transparent)`,
+                            border: `1px solid color-mix(in oklab, ${TABLE_COLORS[edge.toTable]} 35%, transparent)`,
+                          }}
+                          title={`Vai para ${edge.toTable}.${edge.toCol}`}
+                        >
+                          <ArrowRight className="h-2.5 w-2.5" />
+                          {edge.toTable}.{edge.toCol}
+                        </button>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
   );
