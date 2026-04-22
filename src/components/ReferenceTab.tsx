@@ -26,6 +26,22 @@ export function ReferenceTab() {
   const [schemaOpen, setSchemaOpen] = useState(false);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
+  // Detect mobile (<768px) — on mobile expose ONLY SQL Doctor + Excel→SQL.
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mql = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(mql.matches);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+  useEffect(() => {
+    if (isMobile && filter !== ANALYZER_ID && filter !== EXCEL_ID) {
+      setFilter(ANALYZER_ID);
+    }
+  }, [isMobile, filter]);
+
   // Grupos ordenados alfabeticamente; comandos dentro de cada grupo também A→Z.
   const sortedGroups = [...SQL_GROUPS]
     .map((g) => ({
