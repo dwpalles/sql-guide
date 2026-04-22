@@ -3,6 +3,7 @@ import { Database, Dumbbell } from "lucide-react";
 import { ErdDiagram } from "@/components/ErdDiagram";
 import { TreinoPanel } from "@/components/TreinoPanel";
 import { LangToggle } from "@/components/LangToggle";
+import { WhyBrand } from "@/components/WhyBrand";
 import { useT } from "@/i18n";
 
 export const Route = createFileRoute("/treino")({
@@ -69,6 +70,7 @@ function TreinoPage() {
 
       <footer className="mx-auto max-w-[1400px] border-t border-border px-4 py-6 text-xs text-muted-foreground sm:px-6 lg:px-8">
         {t("footer.treino")}
+        <WhyBrand />
       </footer>
     </div>
   );
