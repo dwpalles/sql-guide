@@ -1,7 +1,13 @@
 import { useMemo, useState } from "react";
 import { ArrowRight, KeyRound, Link2 } from "lucide-react";
-import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS } from "@/data/schema";
-import { useT } from "@/i18n";
+import {
+  SCHEMA_TABLES,
+  SCHEMA_RELATIONSHIPS,
+  tableLabel,
+  tableDesc,
+  columnLabel,
+} from "@/data/schema";
+import { useI18n, useT } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 // Each table gets its own distinct color so FK badges and table headers visually match.
@@ -33,6 +39,7 @@ for (const e of EDGES) EDGE_BY_FK.set(`${e.fromTable}.${e.fromCol}`, e);
 
 export function ErdDiagram() {
   const t = useT();
+  const { lang } = useI18n();
   // hovered = either a table name OR a "tabela.coluna" key — both highlight related items.
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -148,18 +155,25 @@ export function ErdDiagram() {
               }
             >
               <div
-                className="mb-2 flex items-center justify-between border-b pb-1.5 font-mono text-sm font-semibold"
+                className="mb-2 border-b pb-1.5"
                 style={{
-                  color,
                   borderColor: `color-mix(in oklab, ${color} 30%, transparent)`,
                 }}
               >
-                <span>{tbl.name}</span>
-                <span
-                  className="inline-block h-2 w-2 rounded-full"
-                  style={{ background: color }}
-                  aria-hidden
-                />
+                <div
+                  className="flex items-center justify-between font-mono text-sm font-semibold"
+                  style={{ color }}
+                >
+                  <span title={tableDesc(tbl, lang)}>{tbl.name}</span>
+                  <span
+                    className="inline-block h-2 w-2 rounded-full"
+                    style={{ background: color }}
+                    aria-hidden
+                  />
+                </div>
+                <div className="mt-0.5 text-[10px] font-normal text-muted-foreground">
+                  {tableLabel(tbl, lang)}
+                </div>
               </div>
               <ul className="flex flex-col gap-1">
                 {tbl.columns.map((c) => {
@@ -175,6 +189,7 @@ export function ErdDiagram() {
                           setHovered(colKey);
                         }
                       }}
+                      title={columnLabel(c, lang)}
                       className={cn(
                         "flex items-center gap-1.5 rounded px-1 py-0.5 font-mono text-[11px] transition-colors",
                         c.kind === "pk"

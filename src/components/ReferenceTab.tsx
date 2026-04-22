@@ -1,11 +1,11 @@
 import { useRef, useState } from "react";
 import { Database, ChevronDown, Activity, FileSpreadsheet } from "lucide-react";
 import { SQL_GROUPS, type SqlGroup } from "@/data/sqlCommands";
-import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS } from "@/data/schema";
+import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS, tableLabel, columnLabel } from "@/data/schema";
 import { CodeBlock } from "@/components/CodeBlock";
 import { SqlAnalyzerPanel } from "@/components/SqlAnalyzerPanel";
 import { ExcelSqlPanel } from "@/components/ExcelSqlPanel";
-import { useT } from "@/i18n";
+import { useI18n, useT } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 const ANALYZER_ID = "analisador";
@@ -309,6 +309,7 @@ function FilterPill({
 
 function SchemaPanel() {
   const t = useT();
+  const { lang } = useI18n();
   return (
     <div className="mb-5 rounded-lg border border-border bg-card p-4">
       <div className="mb-3 text-sm font-semibold text-foreground">
@@ -320,11 +321,17 @@ function SchemaPanel() {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {SCHEMA_TABLES.map((tbl) => (
           <div key={tbl.name} className="rounded-md border border-border bg-code-bg p-3">
-            <div className="mb-2 font-mono text-sm font-semibold text-primary">{tbl.name}</div>
+            <div className="mb-2">
+              <div className="font-mono text-sm font-semibold text-primary">{tbl.name}</div>
+              <div className="text-[10px] font-normal text-muted-foreground">
+                {tableLabel(tbl, lang)}
+              </div>
+            </div>
             <div className="flex flex-wrap gap-1">
               {tbl.columns.map((c) => (
                 <span
                   key={c.name}
+                  title={columnLabel(c, lang)}
                   className={cn(
                     "rounded-md border px-1.5 py-0.5 font-mono text-[11px]",
                     c.kind === "pk"
