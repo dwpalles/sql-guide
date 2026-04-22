@@ -2,8 +2,10 @@ import { useMemo } from "react";
 import { FileSpreadsheet, Star } from "lucide-react";
 import { EXCEL_TO_SQL } from "@/data/excelToSql";
 import { CodeBlock } from "@/components/CodeBlock";
+import { useT } from "@/i18n";
 
 export function ExcelSqlPanel() {
+  const t = useT();
   const list = useMemo(() => {
     // Top 20 primeiro, depois ordem alfabética.
     return [...EXCEL_TO_SQL].sort((a, b) => {
@@ -17,22 +19,22 @@ export function ExcelSqlPanel() {
       <div className="mb-4">
         <h2 className="flex items-center gap-2 text-lg font-semibold">
           <FileSpreadsheet className="h-5 w-5 text-[oklch(0.82_0.16_85)]" />
-          Excel → SQL
+          {t("excel.title")}
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          {EXCEL_TO_SQL.length} funções do Excel mapeadas para o equivalente SQL.
+          {t("excel.subtitle", { n: EXCEL_TO_SQL.length })}
           <span className="ml-1 inline-flex items-center gap-1">
             <Star className="h-3 w-3 fill-[oklch(0.82_0.16_85)] text-[oklch(0.82_0.16_85)]" />
-            = entre as 20 mais usadas (no topo).
+            {t("excel.top")}
           </span>
         </p>
       </div>
 
       <div className="overflow-hidden rounded-lg border border-border">
         <div className="hidden grid-cols-[180px_160px_1fr] gap-4 border-b border-border bg-secondary/40 px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground md:grid">
-          <div>Excel</div>
-          <div>SQL</div>
-          <div>Descrição & exemplo</div>
+          <div>{t("excel.col.excel")}</div>
+          <div>{t("excel.col.sql")}</div>
+          <div>{t("excel.col.descExample")}</div>
         </div>
         <div className="divide-y divide-border">
           {list.map((m) => (
