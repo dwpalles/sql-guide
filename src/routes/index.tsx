@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Database } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Database, Dumbbell } from "lucide-react";
 import { ReferenceTab } from "@/components/ReferenceTab";
 
 export const Route = createFileRoute("/")({
@@ -35,8 +35,23 @@ function Index() {
               SQL<span className="text-muted-foreground">.ref</span>
             </span>
           </div>
-          <span className="hidden text-xs text-muted-foreground sm:inline">
-            Referência completa · 22 grupos · ~220 comandos · analisador integrado
+          <nav className="ml-2 flex items-center gap-1">
+            <Link
+              to="/"
+              className="rounded-md border border-primary bg-primary/15 px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary"
+            >
+              SQL.ref
+            </Link>
+            <Link
+              to="/treino"
+              className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:bg-secondary hover:text-foreground"
+            >
+              <Dumbbell className="h-3.5 w-3.5" />
+              Treino
+            </Link>
+          </nav>
+          <span className="ml-auto hidden text-xs text-muted-foreground sm:inline">
+            Referência completa · 22 grupos · ~220 comandos
           </span>
         </div>
       </header>
