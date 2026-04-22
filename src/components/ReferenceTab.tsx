@@ -5,6 +5,7 @@ import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS } from "@/data/schema";
 import { CodeBlock } from "@/components/CodeBlock";
 import { SqlAnalyzerPanel } from "@/components/SqlAnalyzerPanel";
 import { ExcelSqlPanel } from "@/components/ExcelSqlPanel";
+import { useT } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 const ANALYZER_ID = "analisador";
@@ -17,6 +18,7 @@ const PINK = "oklch(0.78 0.16 320)";
 const GOLD = "oklch(0.82 0.16 85)";
 
 export function ReferenceTab() {
+  const t = useT();
   // SQL Doctor é a tela de entrada por padrão (primeiro item da sidebar).
   const [filter, setFilter] = useState<FilterId>(ANALYZER_ID);
   const [schemaOpen, setSchemaOpen] = useState(false);
@@ -48,11 +50,11 @@ export function ReferenceTab() {
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[230px_1fr]">
       <aside className="hidden lg:sticky lg:top-20 lg:block lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
         <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Categorias
+          {t("sidebar.categories")}
         </div>
         <div className="mt-2 flex flex-col gap-0.5">
           <SidebarLink
-            label="SQL DOCTOR"
+            label={t("sidebar.sqlDoctor")}
             icon={<Activity className="h-3.5 w-3.5" style={{ color: PINK }} />}
             active={filter === ANALYZER_ID}
             onClick={() => setFilter(ANALYZER_ID)}
@@ -60,7 +62,7 @@ export function ReferenceTab() {
             colorOverride={PINK}
           />
           <SidebarLink
-            label="EXCEL → SQL"
+            label={t("sidebar.excelToSql")}
             icon={<FileSpreadsheet className="h-3.5 w-3.5" style={{ color: GOLD }} />}
             active={filter === EXCEL_ID}
             onClick={() => setFilter(EXCEL_ID)}
@@ -87,7 +89,7 @@ export function ReferenceTab() {
             className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-border bg-secondary/40 px-3 py-2 text-xs font-medium text-foreground hover:border-primary"
           >
             <Database className="h-3.5 w-3.5" />
-            Schema E-commerce
+            {t("schema.toggle")}
             <ChevronDown className={cn("h-3.5 w-3.5 transition", schemaOpen && "rotate-180")} />
           </button>
         </div>
@@ -96,14 +98,14 @@ export function ReferenceTab() {
 
         <div className="mb-5 flex flex-wrap gap-1.5 lg:hidden">
           <FilterPill
-            label="SQL DOCTOR"
+            label={t("sidebar.sqlDoctor")}
             icon={<Activity className="h-3 w-3" />}
             active={filter === ANALYZER_ID}
             onClick={() => setFilter(ANALYZER_ID)}
             variant="analyzer"
           />
           <FilterPill
-            label="EXCEL → SQL"
+            label={t("sidebar.excelToSql")}
             icon={<FileSpreadsheet className="h-3 w-3" />}
             active={filter === EXCEL_ID}
             onClick={() => setFilter(EXCEL_ID)}
@@ -133,9 +135,9 @@ export function ReferenceTab() {
                 <table className="w-full text-sm">
                   <thead className="bg-secondary/40 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     <tr>
-                      <th className="w-[28%] px-4 py-2 text-left">Comando</th>
-                      <th className="w-[32%] px-4 py-2 text-left">Descrição</th>
-                      <th className="px-4 py-2 text-left">Exemplo</th>
+                      <th className="w-[28%] px-4 py-2 text-left">{t("table.command")}</th>
+                      <th className="w-[32%] px-4 py-2 text-left">{t("table.description")}</th>
+                      <th className="px-4 py-2 text-left">{t("table.example")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
@@ -306,20 +308,21 @@ function FilterPill({
 }
 
 function SchemaPanel() {
+  const t = useT();
   return (
     <div className="mb-5 rounded-lg border border-border bg-card p-4">
       <div className="mb-3 text-sm font-semibold text-foreground">
-        🗄️ Banco de referência — E-commerce
+        {t("schema.title")}
         <span className="ml-2 text-xs font-normal text-muted-foreground">
-          (todos os exemplos usam este schema)
+          {t("schema.subtitle")}
         </span>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {SCHEMA_TABLES.map((t) => (
-          <div key={t.name} className="rounded-md border border-border bg-code-bg p-3">
-            <div className="mb-2 font-mono text-sm font-semibold text-primary">{t.name}</div>
+        {SCHEMA_TABLES.map((tbl) => (
+          <div key={tbl.name} className="rounded-md border border-border bg-code-bg p-3">
+            <div className="mb-2 font-mono text-sm font-semibold text-primary">{tbl.name}</div>
             <div className="flex flex-wrap gap-1">
-              {t.columns.map((c) => (
+              {tbl.columns.map((c) => (
                 <span
                   key={c.name}
                   className={cn(
@@ -341,7 +344,7 @@ function SchemaPanel() {
         ))}
       </div>
       <div className="mt-3 text-xs text-muted-foreground">
-        🔑 pk = chave primária · 🔗 fk = chave estrangeira · {SCHEMA_RELATIONSHIPS.join(" · ")}
+        {t("schema.legend")} · {SCHEMA_RELATIONSHIPS.join(" · ")}
       </div>
     </div>
   );
