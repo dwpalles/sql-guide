@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Database, ChevronDown, Activity, FileSpreadsheet } from "lucide-react";
 import { SQL_GROUPS, type SqlGroup } from "@/data/sqlCommands";
-import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS } from "@/data/schema";
+import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS, tableLabel, columnLabel } from "@/data/schema";
 import { CodeBlock } from "@/components/CodeBlock";
 import { SqlAnalyzerPanel } from "@/components/SqlAnalyzerPanel";
 import { ExcelSqlPanel } from "@/components/ExcelSqlPanel";
