@@ -39,6 +39,7 @@ for (const e of EDGES) EDGE_BY_FK.set(`${e.fromTable}.${e.fromCol}`, e);
 
 export function ErdDiagram() {
   const t = useT();
+  const { lang } = useI18n();
   // hovered = either a table name OR a "tabela.coluna" key — both highlight related items.
   const [hovered, setHovered] = useState<string | null>(null);
 
