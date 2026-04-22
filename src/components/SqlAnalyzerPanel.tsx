@@ -167,14 +167,15 @@ export function SqlAnalyzerPanel({ onJumpToGroup }: Props) {
 
 function Row({ token, onJumpToGroup }: { token: AnalyzedToken; onJumpToGroup?: (id: string) => void }) {
   const t = useT();
+  const { lang } = useI18n();
   const meta = STATUS_META[token.status];
   const Icon = meta.icon;
 
   const message = (() => {
     if (token.status === "ok") return token.section ? `${t("analyzer.section")} ${token.section}` : "";
-    if (token.status === "warn") return token.note ?? "";
-    if (token.status === "invalid") return token.reason ?? "";
-    if (token.status === "excel") return token.excel?.description ?? "";
+    if (token.status === "warn") return token.canonical ? variantNote(token.token, lang) : (token.note ?? "");
+    if (token.status === "invalid") return invalidReason(token.token, lang);
+    if (token.status === "excel") return token.excel ? excelDescription(token.excel, lang) : "";
     return t("analyzer.notRecognized");
   })();
 
@@ -209,6 +210,7 @@ function Row({ token, onJumpToGroup }: { token: AnalyzedToken; onJumpToGroup?: (
         {token.status === "excel" && token.excel && (
           <span className="ml-2 text-xs text-muted-foreground">
             → {t("analyzer.sqlEquivalent")} <code className="font-mono text-primary">{token.excel.sql}</code>
+            <span className="ml-2 text-[10px]">· {excelCategory(token.excel, lang)}</span>
           </span>
         )}
         {message && <p className="mt-1 text-xs text-muted-foreground">{message}</p>}
