@@ -65,6 +65,7 @@ function TabButton({
 
 function ExercisesView() {
   const t = useT();
+  const { lang } = useI18n();
   const [index, setIndex] = useState(0);
   const [userSql, setUserSql] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
