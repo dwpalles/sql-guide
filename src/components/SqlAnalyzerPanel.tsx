@@ -14,7 +14,9 @@ import {
 import { analyzeSql, findGroupIdForCommand, type AnalyzedToken } from "@/lib/sqlAnalyzer";
 import { explainSql } from "@/lib/sqlExplainer";
 import { CodeBlock } from "@/components/CodeBlock";
-import { useT } from "@/i18n";
+import { useI18n, useT } from "@/i18n";
+import { variantNote, invalidReason } from "@/data/sqlAnalyzerDataI18n";
+import { excelDescription, excelCategory } from "@/data/excelToSqlI18n";
 import { cn } from "@/lib/utils";
 
 type StatusKey = "ok" | "warn" | "invalid" | "unknown" | "excel";
