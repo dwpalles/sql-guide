@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, Eye, EyeOff, RotateCcw, Sparkles, BookOpen, Code2 } from "lucide-react";
 import { EXERCISES } from "@/data/treinoExercises";
+import { exerciseTitle, exercisePrompt } from "@/data/treinoExercisesI18n";
 import { CodeBlock } from "@/components/CodeBlock";
 import { explainSql, type ExplainStep } from "@/lib/sqlExplainer";
 import { useI18n, useT } from "@/i18n";
