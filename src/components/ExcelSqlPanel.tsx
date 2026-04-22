@@ -1,13 +1,15 @@
 import { useMemo } from "react";
 import { FileSpreadsheet, Star } from "lucide-react";
 import { EXCEL_TO_SQL } from "@/data/excelToSql";
+import { excelDescription, excelCategory } from "@/data/excelToSqlI18n";
 import { CodeBlock } from "@/components/CodeBlock";
-import { useT } from "@/i18n";
+import { useI18n, useT } from "@/i18n";
 
 export function ExcelSqlPanel() {
   const t = useT();
+  const { lang } = useI18n();
   const list = useMemo(() => {
-    // Top 20 primeiro, depois ordem alfabética.
+    // Top 20 first, then alphabetical.
     return [...EXCEL_TO_SQL].sort((a, b) => {
       if (a.top !== b.top) return Number(b.top) - Number(a.top);
       return a.excel.localeCompare(b.excel);
@@ -52,10 +54,10 @@ export function ExcelSqlPanel() {
               </div>
               <div className="flex flex-col gap-1">
                 <code className="font-mono text-sm text-primary">{m.sql}</code>
-                <span className="text-[10px] text-muted-foreground">{m.category}</span>
+                <span className="text-[10px] text-muted-foreground">{excelCategory(m, lang)}</span>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">{m.description}</p>
+                <p className="text-xs text-muted-foreground">{excelDescription(m, lang)}</p>
                 <div className="mt-2">
                   <CodeBlock code={m.example} />
                 </div>

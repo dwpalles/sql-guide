@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, Eye, EyeOff, RotateCcw, Sparkles, BookOpen, 
 import { EXERCISES } from "@/data/treinoExercises";
 import { CodeBlock } from "@/components/CodeBlock";
 import { explainSql, type ExplainStep } from "@/lib/sqlExplainer";
-import { useT } from "@/i18n";
+import { useI18n, useT } from "@/i18n";
 import type { DictKey } from "@/i18n";
 import { cn } from "@/lib/utils";
 
@@ -173,17 +173,18 @@ function ExercisesView() {
 
 function EditorView() {
   const t = useT();
+  const { lang } = useI18n();
   const [sql, setSql] = useState(
     "SELECT c.nome, COUNT(p.id) AS total_pedidos\nFROM clientes c\nLEFT JOIN pedidos p ON p.id_cliente = c.id\nGROUP BY c.nome\nORDER BY total_pedidos DESC;",
   );
 
   const steps: ExplainStep[] = useMemo(() => {
     try {
-      return explainSql(sql);
+      return explainSql(sql, lang);
     } catch {
       return [];
     }
-  }, [sql]);
+  }, [sql, lang]);
 
   return (
     <div className="flex flex-1 flex-col">
