@@ -120,9 +120,9 @@ function ExercisesView() {
           >
             {t(levelKey)}
           </span>
-          <h3 className="text-sm font-semibold text-foreground">{ex.title}</h3>
+          <h3 className="text-sm font-semibold text-foreground">{exerciseTitle(ex, lang)}</h3>
         </div>
-        <p className="text-sm text-muted-foreground">{ex.prompt}</p>
+        <p className="text-sm text-muted-foreground">{exercisePrompt(ex, lang)}</p>
       </div>
 
       <div className="mt-4 flex flex-1 flex-col">
