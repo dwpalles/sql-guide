@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Database, ChevronDown, Activity, FileSpreadsheet } from "lucide-react";
 import { SQL_GROUPS, type SqlGroup } from "@/data/sqlCommands";
+import { groupFull, groupNote, rowDescription } from "@/data/sqlCommandsI18n";
 import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS, tableLabel, columnLabel } from "@/data/schema";
 import { CodeBlock } from "@/components/CodeBlock";
 import { SqlAnalyzerPanel } from "@/components/SqlAnalyzerPanel";
@@ -19,6 +20,7 @@ const GOLD = "oklch(0.82 0.16 85)";
 
 export function ReferenceTab() {
   const t = useT();
+  const { lang } = useI18n();
   // SQL Doctor é a tela de entrada por padrão (primeiro item da sidebar).
   const [filter, setFilter] = useState<FilterId>(ANALYZER_ID);
   const [schemaOpen, setSchemaOpen] = useState(false);
@@ -148,7 +150,9 @@ export function ReferenceTab() {
                             {r.name}
                           </code>
                         </td>
-                        <td className="px-4 py-3 text-muted-foreground">{r.description}</td>
+                        <td className="px-4 py-3 text-muted-foreground">
+                          {rowDescription(group.id, r, lang)}
+                        </td>
                         <td className="px-4 py-3">
                           <CodeBlock code={r.example} />
                         </td>
@@ -188,6 +192,9 @@ export function ReferenceTab() {
 }
 
 function SectionHeader({ group }: { group: SqlGroup }) {
+  const { lang } = useI18n();
+  const fullText = groupFull(group, lang);
+  const noteText = groupNote(group, lang);
   return (
     <div className="mb-3 flex flex-wrap items-center gap-3">
       <span
@@ -201,9 +208,9 @@ function SectionHeader({ group }: { group: SqlGroup }) {
         {group.label}
       </span>
       <h3 className="text-base font-semibold text-foreground">
-        {group.full.replace(/^\d+\.\s*/, "")}
+        {fullText.replace(/^\d+\.\s*/, "")}
       </h3>
-      <span className="hidden text-xs text-muted-foreground sm:inline">— {group.note}</span>
+      <span className="hidden text-xs text-muted-foreground sm:inline">— {noteText}</span>
     </div>
   );
 }
