@@ -1,16 +1,15 @@
 import { useT } from "@/i18n";
+import whyLogo from "@/assets/why_solutions_logo.png";
 
 /**
  * Why Solutions brand line for footers.
- * Wordmark: "Why Solutions" (mixed case) rendered in the display brand font
- * (Magneto-substitute). "WH"/" Solutions" white, "y" green (#27ae60).
- * Dark background, additive only (does not change surrounding layout).
+ * Uses the official Why Solutions logo (dark variant) to preserve brand fidelity.
  */
 export function WhyBrand() {
   const t = useT();
   return (
     <div
-      className="mt-4 flex items-center justify-center gap-2 rounded-md px-4 py-3 text-[11px]"
+      className="mt-4 flex items-center justify-center gap-3 rounded-md px-4 py-3 text-[11px]"
       style={{ background: "#111", color: "#9aa0a6" }}
     >
       <span>{t("footer.developedBy")}</span>
@@ -18,20 +17,14 @@ export function WhyBrand() {
         href="https://why.net.br"
         target="_blank"
         rel="noopener noreferrer"
-        className="leading-none hover:opacity-90 inline-flex items-baseline gap-1.5"
+        className="inline-flex items-center hover:opacity-90"
         aria-label="Why Solutions"
       >
-        <span
-          style={{
-            fontFamily: "var(--font-display)",
-            fontWeight: 700,
-            color: "#ffffff",
-            fontSize: "1.35rem",
-          }}
-        >
-          Why
-        </span>
-        <span style={{ color: "#27ae60", fontWeight: 400 }}>Solutions</span>
+        <img
+          src={whyLogo}
+          alt="Why Solutions"
+          style={{ height: 36, width: "auto", display: "block" }}
+        />
       </a>
     </div>
   );
