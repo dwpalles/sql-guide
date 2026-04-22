@@ -20,6 +20,7 @@ const GOLD = "oklch(0.82 0.16 85)";
 
 export function ReferenceTab() {
   const t = useT();
+  const { lang } = useI18n();
   // SQL Doctor é a tela de entrada por padrão (primeiro item da sidebar).
   const [filter, setFilter] = useState<FilterId>(ANALYZER_ID);
   const [schemaOpen, setSchemaOpen] = useState(false);
