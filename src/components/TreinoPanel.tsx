@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, Eye, EyeOff, RotateCcw, Sparkles, BookOpen, 
 import { EXERCISES } from "@/data/treinoExercises";
 import { CodeBlock } from "@/components/CodeBlock";
 import { explainSql, type ExplainStep } from "@/lib/sqlExplainer";
-import { useT } from "@/i18n";
+import { useI18n, useT } from "@/i18n";
 import type { DictKey } from "@/i18n";
 import { cn } from "@/lib/utils";
 
