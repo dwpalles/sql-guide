@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Database, Dumbbell } from "lucide-react";
 import { ReferenceTab } from "@/components/ReferenceTab";
 import { LangToggle } from "@/components/LangToggle";
+import { WhyBrand } from "@/components/WhyBrand";
 import { useT } from "@/i18n";
 
 export const Route = createFileRoute("/")({
@@ -47,7 +48,7 @@ function Index() {
             </Link>
             <Link
               to="/treino"
-              className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:bg-secondary hover:text-foreground"
+              className="hidden md:inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
               <Dumbbell className="h-3.5 w-3.5" />
               {t("nav.treino")}
@@ -68,6 +69,7 @@ function Index() {
 
       <footer className="mx-auto max-w-[1400px] border-t border-border px-4 py-6 text-xs text-muted-foreground sm:px-6 lg:px-8">
         {t("footer.main")}
+        <WhyBrand />
       </footer>
     </div>
   );

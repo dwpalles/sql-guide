@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Database, ChevronDown, Activity, FileSpreadsheet } from "lucide-react";
 import { SQL_GROUPS, type SqlGroup } from "@/data/sqlCommands";
 import { groupFull, groupNote, rowDescription } from "@/data/sqlCommandsI18n";
@@ -25,6 +25,22 @@ export function ReferenceTab() {
   const [filter, setFilter] = useState<FilterId>(ANALYZER_ID);
   const [schemaOpen, setSchemaOpen] = useState(false);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+
+  // Detect mobile (<768px) — on mobile expose ONLY SQL Doctor + Excel→SQL.
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mql = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(mql.matches);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+  useEffect(() => {
+    if (isMobile && filter !== ANALYZER_ID && filter !== EXCEL_ID) {
+      setFilter(ANALYZER_ID);
+    }
+  }, [isMobile, filter]);
 
   // Grupos ordenados alfabeticamente; comandos dentro de cada grupo também A→Z.
   const sortedGroups = [...SQL_GROUPS]
@@ -113,15 +129,17 @@ export function ReferenceTab() {
             onClick={() => setFilter(EXCEL_ID)}
             variant="excel"
           />
-          {sortedGroups.map((g) => (
-            <FilterPill
-              key={g.id}
-              label={g.label.toUpperCase()}
-              color={g.color}
-              active={filter === g.id}
-              onClick={() => setFilter(g.id)}
-            />
-          ))}
+          {/* Group pills only visible on tablet (md) and up; hidden on phones (<768px). */}
+          {!isMobile &&
+            sortedGroups.map((g) => (
+              <FilterPill
+                key={g.id}
+                label={g.label.toUpperCase()}
+                color={g.color}
+                active={filter === g.id}
+                onClick={() => setFilter(g.id)}
+              />
+            ))}
         </div>
 
         <div className="space-y-8">

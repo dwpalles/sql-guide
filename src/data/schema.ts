@@ -90,15 +90,17 @@ export const SCHEMA_TABLES: SchemaTable[] = [
 ];
 
 // Localized helpers — return the best string for the active language with PT fallback.
-export function tableLabel(table: SchemaTable, lang: "pt" | "en"): string {
+// Schema labels are only authored in PT/EN; ES/FR currently fall back to PT.
+import type { Lang } from "@/i18n";
+export function tableLabel(table: SchemaTable, lang: Lang): string {
   if (lang === "en") return table.label_en ?? table.label_pt ?? table.name;
   return table.label_pt ?? table.name;
 }
-export function tableDesc(table: SchemaTable, lang: "pt" | "en"): string {
+export function tableDesc(table: SchemaTable, lang: Lang): string {
   if (lang === "en") return table.desc_en ?? table.desc_pt ?? "";
   return table.desc_pt ?? "";
 }
-export function columnLabel(col: SchemaColumn, lang: "pt" | "en"): string {
+export function columnLabel(col: SchemaColumn, lang: Lang): string {
   if (lang === "en") return col.label_en ?? col.label_pt ?? col.name;
   return col.label_pt ?? col.name;
 }
