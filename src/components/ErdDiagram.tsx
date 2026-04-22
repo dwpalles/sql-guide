@@ -208,7 +208,7 @@ export function ErdDiagram() {
                             background: `color-mix(in oklab, ${TABLE_COLORS[edge.toTable]} 16%, transparent)`,
                             border: `1px solid color-mix(in oklab, ${TABLE_COLORS[edge.toTable]} 35%, transparent)`,
                           }}
-                          title={`Vai para ${edge.toTable}.${edge.toCol}`}
+                          title={`${t("erd.goTo")} ${edge.toTable}.${edge.toCol}`}
                         >
                           <ArrowRight className="h-2.5 w-2.5" />
                           {edge.toTable}.{edge.toCol}
