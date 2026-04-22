@@ -189,6 +189,7 @@ export function ErdDiagram() {
                           setHovered(colKey);
                         }
                       }}
+                      title={columnLabel(c, lang)}
                       className={cn(
                         "flex items-center gap-1.5 rounded px-1 py-0.5 font-mono text-[11px] transition-colors",
                         c.kind === "pk"
