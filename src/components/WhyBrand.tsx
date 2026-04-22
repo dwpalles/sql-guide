@@ -18,13 +18,20 @@ export function WhyBrand() {
         href="https://why.net.br"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-base leading-none hover:opacity-90"
-        style={{ fontFamily: "var(--font-display)", fontWeight: 700 }}
+        className="leading-none hover:opacity-90 inline-flex items-baseline gap-1.5"
         aria-label="Why Solutions"
       >
-        <span style={{ color: "#ffffff" }}>Wh</span>
-        <span style={{ color: "#27ae60" }}>y</span>
-        <span style={{ color: "#ffffff" }}> Solutions</span>
+        <span
+          style={{
+            fontFamily: "var(--font-display)",
+            fontWeight: 700,
+            color: "#ffffff",
+            fontSize: "1.35rem",
+          }}
+        >
+          Why
+        </span>
+        <span style={{ color: "#27ae60", fontWeight: 400 }}>Solutions</span>
       </a>
     </div>
   );
