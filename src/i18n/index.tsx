@@ -113,6 +113,8 @@ const DICT = {
   "erd.title": { pt: "Schema E-commerce", en: "E-commerce Schema" },
   "erd.subtitle": { pt: "Diagrama ERD · 🔑 PK · 🔗 FK · passe o mouse para destacar relacionamentos", en: "ERD diagram · 🔑 PK · 🔗 FK · hover to highlight relationships" },
   "erd.goTo": { pt: "Vai para", en: "Go to" },
+  "erd.relationships": { pt: "Relacionamentos", en: "Relationships" },
+  "erd.tables": { pt: "Tabelas", en: "Tables" },
 } satisfies Record<string, { pt: string; en: string }>;
 
 export type DictKey = keyof typeof DICT;
