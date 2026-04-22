@@ -149,7 +149,9 @@ export function ReferenceTab() {
                             {r.name}
                           </code>
                         </td>
-                        <td className="px-4 py-3 text-muted-foreground">{r.description}</td>
+                        <td className="px-4 py-3 text-muted-foreground">
+                          {rowDescription(group.id, r, lang)}
+                        </td>
                         <td className="px-4 py-3">
                           <CodeBlock code={r.example} />
                         </td>
