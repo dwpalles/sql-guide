@@ -1092,6 +1092,109 @@ const OVERLAYS: Record<Exclude<Lang, "pt">, Record<string, SqlGroupOverlay>> = {
   fr: SQL_GROUPS_FR,
 };
 
+/**
+ * Localized labels for the short pill/sidebar text (kept short, ALL CAPS friendly).
+ * Keys are the group `id` from SQL_GROUPS. PT mirrors the source labels.
+ */
+const GROUP_LABELS: Record<Lang, Record<string, string>> = {
+  pt: {
+    ddl: "DDL",
+    dml: "DML",
+    dcl: "DCL",
+    tcl: "TCL",
+    select: "SELECT",
+    operadores: "Operadores",
+    agregacao: "Agregação",
+    "funcoes-string": "TEXTO",
+    "funcoes-matematicas": "Matemática",
+    "funcoes-data-hora": "Data / Hora",
+    conversao: "Conversão",
+    condicional: "Condicional",
+    join: "JOIN'S",
+    subqueries: "SUBCONSULTAS",
+    "window-functions": "FUNÇÕES DE JANELA",
+    ctes: "CTEs",
+    views: "VIEW'S",
+    "stored-procedures": "PROCEDIMENTOS",
+    triggers: "GATILHOS",
+    indices: "Índices",
+    constraints: "RESTRIÇÕES",
+    tipos: "Tipos",
+  },
+  en: {
+    ddl: "DDL",
+    dml: "DML",
+    dcl: "DCL",
+    tcl: "TCL",
+    select: "SELECT",
+    operadores: "Operators",
+    agregacao: "Aggregation",
+    "funcoes-string": "TEXT",
+    "funcoes-matematicas": "Math",
+    "funcoes-data-hora": "Date / Time",
+    conversao: "Conversion",
+    condicional: "Conditional",
+    join: "JOINS",
+    subqueries: "SUBQUERIES",
+    "window-functions": "WINDOW FUNCTIONS",
+    ctes: "CTEs",
+    views: "VIEWS",
+    "stored-procedures": "PROCEDURES",
+    triggers: "TRIGGERS",
+    indices: "Indexes",
+    constraints: "CONSTRAINTS",
+    tipos: "Types",
+  },
+  es: {
+    ddl: "DDL",
+    dml: "DML",
+    dcl: "DCL",
+    tcl: "TCL",
+    select: "SELECT",
+    operadores: "Operadores",
+    agregacao: "Agregación",
+    "funcoes-string": "TEXTO",
+    "funcoes-matematicas": "Matemáticas",
+    "funcoes-data-hora": "Fecha / Hora",
+    conversao: "Conversión",
+    condicional: "Condicional",
+    join: "JOINS",
+    subqueries: "SUBCONSULTAS",
+    "window-functions": "FUNCIONES DE VENTANA",
+    ctes: "CTEs",
+    views: "VISTAS",
+    "stored-procedures": "PROCEDIMIENTOS",
+    triggers: "DISPARADORES",
+    indices: "Índices",
+    constraints: "RESTRICCIONES",
+    tipos: "Tipos",
+  },
+  fr: {
+    ddl: "DDL",
+    dml: "DML",
+    dcl: "DCL",
+    tcl: "TCL",
+    select: "SELECT",
+    operadores: "Opérateurs",
+    agregacao: "Agrégation",
+    "funcoes-string": "TEXTE",
+    "funcoes-matematicas": "Maths",
+    "funcoes-data-hora": "Date / Heure",
+    conversao: "Conversion",
+    condicional: "Conditionnel",
+    join: "JOINTURES",
+    subqueries: "SOUS-REQUÊTES",
+    "window-functions": "FONCTIONS DE FENÊTRE",
+    ctes: "CTE",
+    views: "VUES",
+    "stored-procedures": "PROCÉDURES",
+    triggers: "DÉCLENCHEURS",
+    indices: "Index",
+    constraints: "CONTRAINTES",
+    tipos: "Types",
+  },
+};
+
 /** Localized accessors with PT fallback. */
 export function groupFull(group: SqlGroup, lang: Lang): string {
   if (lang === "pt") return group.full;
@@ -1100,6 +1203,9 @@ export function groupFull(group: SqlGroup, lang: Lang): string {
 export function groupNote(group: SqlGroup, lang: Lang): string {
   if (lang === "pt") return group.note;
   return OVERLAYS[lang]?.[group.id]?.note ?? group.note;
+}
+export function groupLabel(group: SqlGroup, lang: Lang): string {
+  return GROUP_LABELS[lang]?.[group.id] ?? group.label;
 }
 export function rowDescription(groupId: string, row: SqlRow, lang: Lang): string {
   if (lang === "pt") return row.description;
