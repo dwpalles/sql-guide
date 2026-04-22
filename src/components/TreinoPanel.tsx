@@ -23,7 +23,7 @@ export function TreinoPanel() {
           Exercícios
         </TabButton>
         <TabButton active={tab === "editor"} onClick={() => setTab("editor")} icon={<Code2 className="h-3.5 w-3.5" />}>
-          Editor
+          Depurador
         </TabButton>
       </div>
 
@@ -181,7 +181,7 @@ function EditorView() {
   return (
     <div className="flex flex-1 flex-col">
       <div className="mb-3">
-        <h2 className="text-sm font-semibold text-foreground">Editor SQL</h2>
+        <h2 className="text-sm font-semibold text-foreground">SQL Depurador</h2>
         <p className="text-xs text-muted-foreground">
           Escreva uma query e veja a explicação cláusula por cláusula em tempo real.
         </p>
