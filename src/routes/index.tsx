@@ -48,7 +48,7 @@ function Index() {
             </Link>
             <Link
               to="/treino"
-              className="hidden md:inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:bg-secondary hover:text-foreground"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
               <Dumbbell className="h-3.5 w-3.5" />
               {t("nav.treino")}

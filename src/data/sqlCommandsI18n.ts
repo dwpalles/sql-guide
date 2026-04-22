@@ -1092,6 +1092,109 @@ const OVERLAYS: Record<Exclude<Lang, "pt">, Record<string, SqlGroupOverlay>> = {
   fr: SQL_GROUPS_FR,
 };
 
+/**
+ * Localized labels for the short pill/sidebar text (kept short, ALL CAPS friendly).
+ * Keys are the group `id` from SQL_GROUPS. PT mirrors the source labels.
+ */
+const GROUP_LABELS: Record<Lang, Record<string, string>> = {
+  pt: {
+    ddl: "DDL",
+    dml: "DML",
+    dcl: "DCL",
+    tcl: "TCL",
+    select: "SELECT",
+    operadores: "Operadores",
+    agregacao: "Agregação",
+    string: "TEXTO",
+    matematica: "Matemática",
+    data: "Data / Hora",
+    conversao: "Conversão",
+    condicional: "Condicional",
+    joins: "JOIN'S",
+    subquery: "SUBCONSULTAS",
+    window: "FUNÇÕES DE JANELA",
+    cte: "CTEs",
+    views: "VIEW'S",
+    procedures: "PROCEDIMENTOS",
+    triggers: "GATILHOS",
+    indices: "Índices",
+    constraints: "RESTRIÇÕES",
+    tipos: "Tipos",
+  },
+  en: {
+    ddl: "DDL",
+    dml: "DML",
+    dcl: "DCL",
+    tcl: "TCL",
+    select: "SELECT",
+    operadores: "Operators",
+    agregacao: "Aggregation",
+    string: "TEXT",
+    matematica: "Math",
+    data: "Date / Time",
+    conversao: "Conversion",
+    condicional: "Conditional",
+    joins: "JOINS",
+    subquery: "SUBQUERIES",
+    window: "WINDOW FUNCTIONS",
+    cte: "CTEs",
+    views: "VIEWS",
+    procedures: "PROCEDURES",
+    triggers: "TRIGGERS",
+    indices: "Indexes",
+    constraints: "CONSTRAINTS",
+    tipos: "Types",
+  },
+  es: {
+    ddl: "DDL",
+    dml: "DML",
+    dcl: "DCL",
+    tcl: "TCL",
+    select: "SELECT",
+    operadores: "Operadores",
+    agregacao: "Agregación",
+    string: "TEXTO",
+    matematica: "Matemáticas",
+    data: "Fecha / Hora",
+    conversao: "Conversión",
+    condicional: "Condicional",
+    joins: "JOINS",
+    subquery: "SUBCONSULTAS",
+    window: "FUNCIONES DE VENTANA",
+    cte: "CTEs",
+    views: "VISTAS",
+    procedures: "PROCEDIMIENTOS",
+    triggers: "DISPARADORES",
+    indices: "Índices",
+    constraints: "RESTRICCIONES",
+    tipos: "Tipos",
+  },
+  fr: {
+    ddl: "DDL",
+    dml: "DML",
+    dcl: "DCL",
+    tcl: "TCL",
+    select: "SELECT",
+    operadores: "Opérateurs",
+    agregacao: "Agrégation",
+    string: "TEXTE",
+    matematica: "Maths",
+    data: "Date / Heure",
+    conversao: "Conversion",
+    condicional: "Conditionnel",
+    joins: "JOINTURES",
+    subquery: "SOUS-REQUÊTES",
+    window: "FONCTIONS DE FENÊTRE",
+    cte: "CTE",
+    views: "VUES",
+    procedures: "PROCÉDURES",
+    triggers: "DÉCLENCHEURS",
+    indices: "Index",
+    constraints: "CONTRAINTES",
+    tipos: "Types",
+  },
+};
+
 /** Localized accessors with PT fallback. */
 export function groupFull(group: SqlGroup, lang: Lang): string {
   if (lang === "pt") return group.full;
@@ -1100,6 +1203,9 @@ export function groupFull(group: SqlGroup, lang: Lang): string {
 export function groupNote(group: SqlGroup, lang: Lang): string {
   if (lang === "pt") return group.note;
   return OVERLAYS[lang]?.[group.id]?.note ?? group.note;
+}
+export function groupLabel(group: SqlGroup, lang: Lang): string {
+  return GROUP_LABELS[lang]?.[group.id] ?? group.label;
 }
 export function rowDescription(groupId: string, row: SqlRow, lang: Lang): string {
   if (lang === "pt") return row.description;

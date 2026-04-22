@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Database, ChevronDown, Activity, FileSpreadsheet } from "lucide-react";
 import { SQL_GROUPS, type SqlGroup } from "@/data/sqlCommands";
-import { groupFull, groupNote, rowDescription } from "@/data/sqlCommandsI18n";
+import { groupFull, groupNote, groupLabel, rowDescription } from "@/data/sqlCommandsI18n";
 import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS, tableLabel, columnLabel } from "@/data/schema";
 import { CodeBlock } from "@/components/CodeBlock";
 import { SqlAnalyzerPanel } from "@/components/SqlAnalyzerPanel";
@@ -26,11 +26,13 @@ export function ReferenceTab() {
   const [schemaOpen, setSchemaOpen] = useState(false);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
-  // Detect mobile (<768px) — on mobile expose ONLY SQL Doctor + Excel→SQL.
+  // Detect mobile-only layout (<640px = below Tailwind `sm`).
+  // At >=640px, ALL pills, sidebar entries and the TREINO tab remain visible
+  // (they may wrap or scroll horizontally, but never disappear).
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const mql = window.matchMedia("(max-width: 767px)");
+    const mql = window.matchMedia("(max-width: 639px)");
     const update = () => setIsMobile(mql.matches);
     update();
     mql.addEventListener("change", update);
@@ -42,13 +44,14 @@ export function ReferenceTab() {
     }
   }, [isMobile, filter]);
 
-  // Grupos ordenados alfabeticamente; comandos dentro de cada grupo também A→Z.
+  // Grupos ordenados alfabeticamente pelo rótulo localizado;
+  // comandos dentro de cada grupo também A→Z.
   const sortedGroups = [...SQL_GROUPS]
     .map((g) => ({
       ...g,
       rows: [...g.rows].sort((a, b) => a.name.localeCompare(b.name, "pt-BR")),
     }))
-    .sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));
+    .sort((a, b) => groupLabel(a, lang).localeCompare(groupLabel(b, lang), lang));
 
   const showAnalyzer = filter === ANALYZER_ID;
   const showExcel = filter === EXCEL_ID;
@@ -90,7 +93,7 @@ export function ReferenceTab() {
           {sortedGroups.map((g) => (
             <SidebarLink
               key={g.id}
-              label={g.label.toUpperCase()}
+              label={groupLabel(g, lang).toUpperCase()}
               color={g.color}
               count={g.rows.length}
               active={filter === g.id}
@@ -129,12 +132,12 @@ export function ReferenceTab() {
             onClick={() => setFilter(EXCEL_ID)}
             variant="excel"
           />
-          {/* Group pills only visible on tablet (md) and up; hidden on phones (<768px). */}
+          {/* Group pills only hidden on phones (<640px). At sm+ they always render. */}
           {!isMobile &&
             sortedGroups.map((g) => (
               <FilterPill
                 key={g.id}
-                label={g.label.toUpperCase()}
+                label={groupLabel(g, lang).toUpperCase()}
                 color={g.color}
                 active={filter === g.id}
                 onClick={() => setFilter(g.id)}
@@ -223,7 +226,7 @@ function SectionHeader({ group }: { group: SqlGroup }) {
           borderColor: `color-mix(in oklab, ${group.color} 35%, transparent)`,
         }}
       >
-        {group.label}
+        {groupLabel(group, lang)}
       </span>
       <h3 className="text-base font-semibold text-foreground">
         {fullText.replace(/^\d+\.\s*/, "")}

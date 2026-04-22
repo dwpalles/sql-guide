@@ -2,7 +2,8 @@ import { useT } from "@/i18n";
 
 /**
  * Why Solutions brand line for footers.
- * Wordmark: "WHY SOLUTIONS" — "WHY" white, "Y" green (#27ae60).
+ * Wordmark: "Why Solutions" (mixed case) rendered in the display brand font
+ * (Magneto-substitute). "WH"/" Solutions" white, "y" green (#27ae60).
  * Dark background, additive only (does not change surrounding layout).
  */
 export function WhyBrand() {
@@ -17,12 +18,13 @@ export function WhyBrand() {
         href="https://why.net.br"
         target="_blank"
         rel="noopener noreferrer"
-        className="font-mono font-bold tracking-widest hover:opacity-90"
+        className="text-base leading-none hover:opacity-90"
+        style={{ fontFamily: "var(--font-display)", fontWeight: 700 }}
         aria-label="Why Solutions"
       >
-        <span style={{ color: "#ffffff" }}>WH</span>
-        <span style={{ color: "#27ae60" }}>Y</span>
-        <span style={{ color: "#ffffff" }}> SOLUTIONS</span>
+        <span style={{ color: "#ffffff" }}>Wh</span>
+        <span style={{ color: "#27ae60" }}>y</span>
+        <span style={{ color: "#ffffff" }}> Solutions</span>
       </a>
     </div>
   );
