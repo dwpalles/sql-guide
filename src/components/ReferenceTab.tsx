@@ -5,7 +5,7 @@ import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS, tableLabel, columnLabel } from "@/
 import { CodeBlock } from "@/components/CodeBlock";
 import { SqlAnalyzerPanel } from "@/components/SqlAnalyzerPanel";
 import { ExcelSqlPanel } from "@/components/ExcelSqlPanel";
-import { useT } from "@/i18n";
+import { useI18n, useT } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 const ANALYZER_ID = "analisador";
