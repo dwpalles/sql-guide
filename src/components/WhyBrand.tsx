@@ -23,7 +23,7 @@ export function WhyBrand() {
         <img
           src={whyLogo}
           alt="Why Solutions"
-          style={{ height: 36, width: "auto", display: "block" }}
+          style={{ height: 108, width: "auto", display: "block" }}
         />
       </a>
     </div>
