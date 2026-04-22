@@ -1,4 +1,4 @@
-// English overlay for EXCEL_TO_SQL: descriptions + categories.
+// Multi-language overlay for EXCEL_TO_SQL: descriptions + categories.
 // Keyed by the Excel function name (uppercased). Falls back to PT when missing.
 
 import type { Lang } from "@/i18n";
@@ -14,6 +14,32 @@ const CATEGORY_EN: Record<string, string> = {
   "Matemática": "Math",
   "Janela": "Window",
   "Conjuntos": "Sets",
+  "Pivot": "Pivot",
+};
+
+const CATEGORY_ES: Record<string, string> = {
+  "Pesquisa": "Búsqueda",
+  "Agregação": "Agregación",
+  "Agregação Condicional": "Agregación Condicional",
+  "Lógica": "Lógica",
+  "Texto": "Texto",
+  "Data/Hora": "Fecha/Hora",
+  "Matemática": "Matemática",
+  "Janela": "Ventana",
+  "Conjuntos": "Conjuntos",
+  "Pivot": "Pivot",
+};
+
+const CATEGORY_FR: Record<string, string> = {
+  "Pesquisa": "Recherche",
+  "Agregação": "Agrégation",
+  "Agregação Condicional": "Agrégation Conditionnelle",
+  "Lógica": "Logique",
+  "Texto": "Texte",
+  "Data/Hora": "Date/Heure",
+  "Matemática": "Mathématiques",
+  "Janela": "Fenêtre",
+  "Conjuntos": "Ensembles",
   "Pivot": "Pivot",
 };
 
@@ -101,14 +127,175 @@ const DESC_EN: Record<string, string> = {
   "PIVOT TABLE": "Pivot table — in SQL combines GROUP BY with CASE/PIVOT.",
 };
 
+const DESC_ES: Record<string, string> = {
+  "VLOOKUP": "Busca un valor en otra tabla y devuelve la columna correspondiente.",
+  "HLOOKUP": "Equivalente a VLOOKUP pero horizontal — en SQL es un JOIN.",
+  "XLOOKUP": "Búsqueda avanzada con valor por defecto — equivalente a LEFT JOIN + COALESCE.",
+  "INDEX/MATCH": "Combo clásico de búsqueda — en SQL es un JOIN con ON.",
+  "MATCH": "Encuentra la posición de un valor — en SQL filtra con WHERE/IN.",
+  "LOOKUP": "Versión antigua de VLOOKUP — en SQL es un JOIN.",
+  "CHOOSE": "Elige un valor de una lista por índice — en SQL usa CASE.",
+  "SUM": "Suma los valores de una columna.",
+  "AVERAGE": "Calcula la media aritmética de una columna.",
+  "COUNT": "Cuenta los números (no nulos) en una columna.",
+  "COUNTA": "Cuenta valores no vacíos — en SQL usa COUNT(columna).",
+  "MAX": "Devuelve el valor más grande de una columna.",
+  "MIN": "Devuelve el valor más pequeño de una columna.",
+  "MEDIAN": "Mediana — en SQL usa PERCENTILE_CONT(0.5).",
+  "STDEV": "Desviación estándar muestral.",
+  "VAR": "Varianza muestral.",
+  "PRODUCT": "Producto de valores — en SQL se emula con EXP(SUM(LN(x))).",
+  "SUMIF": "Suma valores que cumplen un criterio.",
+  "SUMIFS": "Suma con múltiples criterios.",
+  "COUNTIF": "Cuenta filas que cumplen un criterio.",
+  "COUNTIFS": "Cuenta con múltiples criterios.",
+  "AVERAGEIF": "Promedio condicional.",
+  "AVERAGEIFS": "Promedio con múltiples criterios.",
+  "MAXIFS": "Valor más grande con criterios.",
+  "MINIFS": "Valor más pequeño con criterios.",
+  "IF": "Devuelve uno de dos valores según una condición.",
+  "IFS": "Varias condiciones encadenadas — CASE con múltiples WHEN.",
+  "AND": "Y lógico entre condiciones.",
+  "OR": "O lógico entre condiciones.",
+  "NOT": "Niega una condición.",
+  "IFERROR": "Devuelve un valor alternativo cuando hay error/NULL.",
+  "IFNA": "Devuelve alternativo si #N/A — en SQL maneja NULL.",
+  "SWITCH": "CASE de expresión — compara un valor contra varias opciones.",
+  "CONCATENATE": "Une textos en una sola cadena.",
+  "CONCAT": "Une textos (versión moderna).",
+  "TEXTJOIN": "Une múltiples valores con un separador — en SQL es STRING_AGG.",
+  "LEFT": "Toma N caracteres desde la izquierda.",
+  "RIGHT": "Toma N caracteres desde la derecha.",
+  "MID": "Extrae una subcadena a partir de una posición.",
+  "LEN": "Número de caracteres en la cadena.",
+  "UPPER": "Convierte a mayúsculas.",
+  "LOWER": "Convierte a minúsculas.",
+  "PROPER": "Pone en mayúscula la primera letra de cada palabra.",
+  "TRIM": "Elimina espacios al inicio y al final.",
+  "SUBSTITUTE": "Reemplaza ocurrencias de un texto.",
+  "REPLACE": "Reemplaza parte del texto.",
+  "FIND": "Localiza la posición de un texto dentro de otro.",
+  "SEARCH": "Búsqueda de texto — en SQL usa LIKE o INSTR.",
+  "TEXT": "Formatea un valor como texto.",
+  "TODAY": "Fecha actual (sin hora).",
+  "NOW": "Fecha y hora actuales.",
+  "YEAR": "Extrae el año de una fecha.",
+  "MONTH": "Extrae el mes de una fecha.",
+  "DAY": "Extrae el día de una fecha.",
+  "DATEDIF": "Diferencia entre dos fechas.",
+  "EOMONTH": "Último día del mes.",
+  "WEEKDAY": "Día de la semana de una fecha.",
+  "DATE": "Construye una fecha a partir de partes.",
+  "ROUND": "Redondea un número a N decimales.",
+  "ROUNDUP": "Redondea hacia arriba.",
+  "ROUNDDOWN": "Redondea hacia abajo.",
+  "ABS": "Valor absoluto.",
+  "MOD": "Resto de la división.",
+  "POWER": "Potencia.",
+  "SQRT": "Raíz cuadrada.",
+  "RAND": "Número aleatorio.",
+  "INT": "Parte entera de un número.",
+  "RANK": "Posición de un valor — en SQL es una función de ventana.",
+  "UNIQUE": "Valores únicos de una columna.",
+  "SORT": "Ordena resultados.",
+  "FILTER": "Filtra filas — en SQL es WHERE.",
+  "PIVOT TABLE": "Tabla dinámica — en SQL combina GROUP BY con CASE/PIVOT.",
+};
+
+const DESC_FR: Record<string, string> = {
+  "VLOOKUP": "Recherche une valeur dans une autre table et renvoie la colonne correspondante.",
+  "HLOOKUP": "Équivalent de VLOOKUP mais horizontal — en SQL c'est un JOIN.",
+  "XLOOKUP": "Recherche avancée avec valeur par défaut — équivalent à LEFT JOIN + COALESCE.",
+  "INDEX/MATCH": "Combinaison classique de recherche — en SQL c'est un JOIN avec ON.",
+  "MATCH": "Trouve la position d'une valeur — en SQL filtrer avec WHERE/IN.",
+  "LOOKUP": "Ancienne version de VLOOKUP — en SQL c'est un JOIN.",
+  "CHOOSE": "Choisit une valeur dans une liste par index — en SQL utilisez CASE.",
+  "SUM": "Somme les valeurs d'une colonne.",
+  "AVERAGE": "Calcule la moyenne arithmétique d'une colonne.",
+  "COUNT": "Compte les nombres (non nuls) dans une colonne.",
+  "COUNTA": "Compte les valeurs non vides — en SQL utilisez COUNT(colonne).",
+  "MAX": "Renvoie la plus grande valeur d'une colonne.",
+  "MIN": "Renvoie la plus petite valeur d'une colonne.",
+  "MEDIAN": "Médiane — en SQL utilisez PERCENTILE_CONT(0.5).",
+  "STDEV": "Écart-type d'échantillon.",
+  "VAR": "Variance d'échantillon.",
+  "PRODUCT": "Produit des valeurs — en SQL émulé avec EXP(SUM(LN(x))).",
+  "SUMIF": "Somme les valeurs qui correspondent à un critère.",
+  "SUMIFS": "Somme avec plusieurs critères.",
+  "COUNTIF": "Compte les lignes qui correspondent à un critère.",
+  "COUNTIFS": "Compte avec plusieurs critères.",
+  "AVERAGEIF": "Moyenne conditionnelle.",
+  "AVERAGEIFS": "Moyenne avec plusieurs critères.",
+  "MAXIFS": "Plus grande valeur avec critères.",
+  "MINIFS": "Plus petite valeur avec critères.",
+  "IF": "Renvoie l'une de deux valeurs selon une condition.",
+  "IFS": "Plusieurs conditions enchaînées — CASE avec plusieurs WHEN.",
+  "AND": "ET logique entre conditions.",
+  "OR": "OU logique entre conditions.",
+  "NOT": "Nie une condition.",
+  "IFERROR": "Renvoie une valeur alternative en cas d'erreur/NULL.",
+  "IFNA": "Renvoie l'alternative si #N/A — en SQL gère NULL.",
+  "SWITCH": "CASE d'expression — compare une valeur à plusieurs options.",
+  "CONCATENATE": "Joint des textes en une seule chaîne.",
+  "CONCAT": "Joint des textes (version moderne).",
+  "TEXTJOIN": "Joint plusieurs valeurs avec un séparateur — en SQL c'est STRING_AGG.",
+  "LEFT": "Prend N caractères à partir de la gauche.",
+  "RIGHT": "Prend N caractères à partir de la droite.",
+  "MID": "Extrait une sous-chaîne à partir d'une position.",
+  "LEN": "Nombre de caractères dans la chaîne.",
+  "UPPER": "Convertit en majuscules.",
+  "LOWER": "Convertit en minuscules.",
+  "PROPER": "Met en majuscule la première lettre de chaque mot.",
+  "TRIM": "Supprime les espaces de début et de fin.",
+  "SUBSTITUTE": "Remplace les occurrences d'un texte.",
+  "REPLACE": "Remplace une partie du texte.",
+  "FIND": "Localise la position d'un texte dans un autre.",
+  "SEARCH": "Recherche de texte — en SQL utilisez LIKE ou INSTR.",
+  "TEXT": "Formate une valeur en texte.",
+  "TODAY": "Date actuelle (sans heure).",
+  "NOW": "Date et heure actuelles.",
+  "YEAR": "Extrait l'année d'une date.",
+  "MONTH": "Extrait le mois d'une date.",
+  "DAY": "Extrait le jour d'une date.",
+  "DATEDIF": "Différence entre deux dates.",
+  "EOMONTH": "Dernier jour du mois.",
+  "WEEKDAY": "Jour de la semaine d'une date.",
+  "DATE": "Construit une date à partir de ses parties.",
+  "ROUND": "Arrondit un nombre à N décimales.",
+  "ROUNDUP": "Arrondit vers le haut.",
+  "ROUNDDOWN": "Arrondit vers le bas.",
+  "ABS": "Valeur absolue.",
+  "MOD": "Reste de la division.",
+  "POWER": "Puissance.",
+  "SQRT": "Racine carrée.",
+  "RAND": "Nombre aléatoire.",
+  "INT": "Partie entière d'un nombre.",
+  "RANK": "Position d'une valeur — en SQL c'est une fonction de fenêtre.",
+  "UNIQUE": "Valeurs uniques d'une colonne.",
+  "SORT": "Trie les résultats.",
+  "FILTER": "Filtre les lignes — en SQL c'est WHERE.",
+  "PIVOT TABLE": "Tableau croisé dynamique — en SQL combine GROUP BY avec CASE/PIVOT.",
+};
+
+const DESC: Record<Exclude<Lang, "pt">, Record<string, string>> = {
+  en: DESC_EN,
+  es: DESC_ES,
+  fr: DESC_FR,
+};
+const CATS: Record<Exclude<Lang, "pt">, Record<string, string>> = {
+  en: CATEGORY_EN,
+  es: CATEGORY_ES,
+  fr: CATEGORY_FR,
+};
+
 export function excelDescription(m: ExcelMapping, lang: Lang): string {
-  if (lang === "en") return DESC_EN[m.excel.toUpperCase()] ?? m.description;
-  return m.description;
+  if (lang === "pt") return m.description;
+  return DESC[lang]?.[m.excel.toUpperCase()] ?? m.description;
 }
 
 export function excelCategory(m: ExcelMapping, lang: Lang): string {
-  if (lang === "en") return CATEGORY_EN[m.category] ?? m.category;
-  return m.category;
+  if (lang === "pt") return m.category;
+  return CATS[lang]?.[m.category] ?? m.category;
 }
 
 export function excelMappingFor(token: string): ExcelMapping | undefined {
