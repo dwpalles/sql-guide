@@ -54,10 +54,10 @@ export function ExcelSqlPanel() {
               </div>
               <div className="flex flex-col gap-1">
                 <code className="font-mono text-sm text-primary">{m.sql}</code>
-                <span className="text-[10px] text-muted-foreground">{m.category}</span>
+                <span className="text-[10px] text-muted-foreground">{excelCategory(m, lang)}</span>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">{m.description}</p>
+                <p className="text-xs text-muted-foreground">{excelDescription(m, lang)}</p>
                 <div className="mt-2">
                   <CodeBlock code={m.example} />
                 </div>
