@@ -39,10 +39,11 @@ interface Props {
 
 export function SqlAnalyzerPanel({ onJumpToGroup }: Props) {
   const t = useT();
+  const { lang } = useI18n();
   const [code, setCode] = useState("");
   const [analysis, setAnalysis] = useState<ReturnType<typeof analyzeSql> | null>(null);
 
-  const explainSteps = useMemo(() => explainSql(code), [code]);
+  const explainSteps = useMemo(() => explainSql(code, lang), [code, lang]);
 
   const run = () => setAnalysis(analyzeSql(code));
   const clear = () => { setCode(""); setAnalysis(null); };
