@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ArrowRight, KeyRound, Link2 } from "lucide-react";
 import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS } from "@/data/schema";
+import { useT } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 // Each table gets its own distinct color so FK badges and table headers visually match.
