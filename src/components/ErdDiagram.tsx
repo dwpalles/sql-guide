@@ -121,15 +121,15 @@ export function ErdDiagram() {
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {SCHEMA_TABLES.map((t) => {
-          const color = TABLE_COLORS[t.name] ?? "var(--primary)";
-          const highlighted = isTableHighlighted(t.name);
-          const dimmed = isTableDimmed(t.name);
+        {SCHEMA_TABLES.map((tbl) => {
+          const color = TABLE_COLORS[tbl.name] ?? "var(--primary)";
+          const highlighted = isTableHighlighted(tbl.name);
+          const dimmed = isTableDimmed(tbl.name);
           return (
             <div
-              key={t.name}
-              id={`erd-table-${t.name}`}
-              onMouseEnter={() => setHovered(t.name)}
+              key={tbl.name}
+              id={`erd-table-${tbl.name}`}
+              onMouseEnter={() => setHovered(tbl.name)}
               onMouseLeave={() => setHovered(null)}
               className={cn(
                 "rounded-md border bg-code-bg p-3 shadow-sm transition-all",
@@ -154,7 +154,7 @@ export function ErdDiagram() {
                   borderColor: `color-mix(in oklab, ${color} 30%, transparent)`,
                 }}
               >
-                <span>{t.name}</span>
+                <span>{tbl.name}</span>
                 <span
                   className="inline-block h-2 w-2 rounded-full"
                   style={{ background: color }}
@@ -162,8 +162,8 @@ export function ErdDiagram() {
                 />
               </div>
               <ul className="flex flex-col gap-1">
-                {t.columns.map((c) => {
-                  const colKey = `${t.name}.${c.name}`;
+                {tbl.columns.map((c) => {
+                  const colKey = `${tbl.name}.${c.name}`;
                   const edge = EDGE_BY_FK.get(colKey);
                   const isFkHovered = hovered === colKey;
                   return (
