@@ -14,15 +14,21 @@ import {
 import { analyzeSql, findGroupIdForCommand, type AnalyzedToken } from "@/lib/sqlAnalyzer";
 import { explainSql } from "@/lib/sqlExplainer";
 import { CodeBlock } from "@/components/CodeBlock";
+import { useT } from "@/i18n";
 import { cn } from "@/lib/utils";
 
-const STATUS_META = {
-  ok: { icon: CheckCircle2, label: "Válido", cls: "border-success/30 bg-success/10 text-success" },
-  warn: { icon: AlertTriangle, label: "Variante", cls: "border-warning/30 bg-warning/10 text-warning" },
-  invalid: { icon: XCircle, label: "Inválido", cls: "border-destructive/30 bg-destructive/10 text-destructive" },
-  unknown: { icon: HelpCircle, label: "Desconhecido", cls: "border-border bg-muted/40 text-muted-foreground" },
-  excel: { icon: FileSpreadsheet, label: "Excel → SQL", cls: "border-[oklch(0.78_0.16_85)]/40 bg-[oklch(0.78_0.16_85)]/10 text-[oklch(0.82_0.16_85)]" },
-} as const;
+type StatusKey = "ok" | "warn" | "invalid" | "unknown" | "excel";
+
+const STATUS_META: Record<
+  StatusKey,
+  { icon: typeof CheckCircle2; labelKey: "status.ok" | "status.warn" | "status.invalid" | "status.unknown" | "status.excel"; cls: string }
+> = {
+  ok: { icon: CheckCircle2, labelKey: "status.ok", cls: "border-success/30 bg-success/10 text-success" },
+  warn: { icon: AlertTriangle, labelKey: "status.warn", cls: "border-warning/30 bg-warning/10 text-warning" },
+  invalid: { icon: XCircle, labelKey: "status.invalid", cls: "border-destructive/30 bg-destructive/10 text-destructive" },
+  unknown: { icon: HelpCircle, labelKey: "status.unknown", cls: "border-border bg-muted/40 text-muted-foreground" },
+  excel: { icon: FileSpreadsheet, labelKey: "status.excel", cls: "border-[oklch(0.78_0.16_85)]/40 bg-[oklch(0.78_0.16_85)]/10 text-[oklch(0.82_0.16_85)]" },
+};
 
 interface Props {
   /** when a related/canonical command is clicked, jump to its group section */
@@ -30,6 +36,7 @@ interface Props {
 }
 
 export function SqlAnalyzerPanel({ onJumpToGroup }: Props) {
+  const t = useT();
   const [code, setCode] = useState("");
   const [analysis, setAnalysis] = useState<ReturnType<typeof analyzeSql> | null>(null);
 
@@ -42,19 +49,15 @@ export function SqlAnalyzerPanel({ onJumpToGroup }: Props) {
   return (
     <div>
       <div className="mb-3">
-        <h2 className="text-lg font-semibold">⌥ Analisador de SQL</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Cole ou digite qualquer código SQL — cada comando é identificado, verificado e
-          relacionado ao material acima. Variantes de outros dialetos (SQL Server, Oracle…), termos inválidos
-          e <span className="font-medium text-[oklch(0.82_0.16_85)]">funções do Excel</span> (com equivalente SQL) também são detectados.
-        </p>
+        <h2 className="text-lg font-semibold">{t("analyzer.title")}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{t("analyzer.intro")}</p>
       </div>
 
       <textarea
         value={code}
         onChange={(e) => setCode(e.target.value)}
         spellCheck={false}
-        placeholder={"Cole sua query ou digite uma função Excel (VLOOKUP, SUMIF, COUNTIF…)\nEx: SELECT nome, MAX(preco) FROM produtos WHERE estoque > 0 GROUP BY id_categoria HAVING COUNT(*) > 2 ORDER BY preco DESC LIMIT 5;"}
+        placeholder={t("analyzer.placeholder")}
         className="min-h-[160px] w-full rounded-lg border border-border bg-code-bg p-3 font-mono text-sm leading-relaxed text-foreground outline-none focus:border-primary"
       />
 
@@ -62,18 +65,16 @@ export function SqlAnalyzerPanel({ onJumpToGroup }: Props) {
       <div className="mt-3 rounded-lg border border-border bg-card/40">
         <div className="flex items-center gap-2 border-b border-border px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           <BookOpen className="h-3.5 w-3.5 text-primary" />
-          Explicação passo a passo
+          {t("analyzer.stepByStep")}
           {explainSteps.length > 0 && (
             <span className="ml-auto rounded-full bg-secondary/60 px-2 py-0.5 font-mono text-[10px] tabular-nums text-muted-foreground">
-              {explainSteps.length} cláusula{explainSteps.length === 1 ? "" : "s"}
+              {t("analyzer.clauses", { n: explainSteps.length, s: explainSteps.length === 1 ? "" : "s" })}
             </span>
           )}
         </div>
 
         {explainSteps.length === 0 ? (
-          <p className="px-3 py-4 text-xs text-muted-foreground">
-            Comece a digitar uma query (SELECT, INSERT, UPDATE, DELETE, CREATE…) e cada cláusula será explicada aqui automaticamente, com contexto do schema e-commerce.
-          </p>
+          <p className="px-3 py-4 text-xs text-muted-foreground">{t("analyzer.empty")}</p>
         ) : (
           <ol className="divide-y divide-border">
             {explainSteps.map((s, i) => (
@@ -111,18 +112,18 @@ export function SqlAnalyzerPanel({ onJumpToGroup }: Props) {
           disabled={!code.trim()}
           className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <Sparkles className="h-4 w-4" /> Analisar
+          <Sparkles className="h-4 w-4" /> {t("analyzer.analyze")}
         </button>
         <button
           onClick={clear}
           className="inline-flex items-center gap-2 rounded-md border border-border bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground transition hover:bg-secondary/70"
         >
-          <RotateCcw className="h-4 w-4" /> Limpar
+          <RotateCcw className="h-4 w-4" /> {t("analyzer.clear")}
         </button>
 
         {analysis && (
           <div className="ml-auto flex items-center gap-3 text-xs text-muted-foreground">
-            <span>{analysis.counts.total} identificados:</span>
+            <span>{t("analyzer.identified", { n: analysis.counts.total })}</span>
             <span className="inline-flex items-center gap-1">{analysis.counts.ok}<CheckCircle2 className="h-3.5 w-3.5 text-success" /></span>
             <span className="inline-flex items-center gap-1">{analysis.counts.warn}<AlertTriangle className="h-3.5 w-3.5 text-warning" /></span>
             <span className="inline-flex items-center gap-1">{analysis.counts.invalid}<XCircle className="h-3.5 w-3.5 text-destructive" /></span>
@@ -138,20 +139,20 @@ export function SqlAnalyzerPanel({ onJumpToGroup }: Props) {
 
       {analysis && analysis.tokens.length === 0 && (
         <div className="mt-5 rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-          Nenhum comando SQL ou função Excel conhecido identificado. Tenta colar uma query ou uma função como <code className="font-mono">VLOOKUP</code>.
+          {t("analyzer.noResults")} <code className="font-mono">VLOOKUP</code>.
         </div>
       )}
 
       {analysis && analysis.tokens.length > 0 && (
         <div className="mt-5 overflow-hidden rounded-lg border border-border">
           <div className="grid grid-cols-[150px_1fr_240px] gap-4 border-b border-border bg-secondary/40 px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-            <div>Status / Seção</div>
-            <div>Comando</div>
-            <div>Relacionados / Sugestões</div>
+            <div>{t("analyzer.col.status")}</div>
+            <div>{t("analyzer.col.command")}</div>
+            <div>{t("analyzer.col.related")}</div>
           </div>
           <div className="divide-y divide-border">
-            {analysis.tokens.map((t, i) => (
-              <Row key={i} token={t} onJumpToGroup={onJumpToGroup} />
+            {analysis.tokens.map((tok, i) => (
+              <Row key={i} token={tok} onJumpToGroup={onJumpToGroup} />
             ))}
           </div>
         </div>
@@ -162,22 +163,23 @@ export function SqlAnalyzerPanel({ onJumpToGroup }: Props) {
 }
 
 function Row({ token, onJumpToGroup }: { token: AnalyzedToken; onJumpToGroup?: (id: string) => void }) {
+  const t = useT();
   const meta = STATUS_META[token.status];
   const Icon = meta.icon;
 
   const message = (() => {
-    if (token.status === "ok") return token.section ? `Seção ${token.section}` : "";
+    if (token.status === "ok") return token.section ? `${t("analyzer.section")} ${token.section}` : "";
     if (token.status === "warn") return token.note ?? "";
     if (token.status === "invalid") return token.reason ?? "";
     if (token.status === "excel") return token.excel?.description ?? "";
-    return "Não foi reconhecido como comando SQL conhecido.";
+    return t("analyzer.notRecognized");
   })();
 
   return (
     <div className="grid grid-cols-[150px_1fr_240px] gap-4 px-4 py-3 text-sm">
       <div className="flex flex-col gap-1">
         <span className={cn("inline-flex w-fit items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium", meta.cls)}>
-          <Icon className="h-3 w-3" /> {meta.label}
+          <Icon className="h-3 w-3" /> {t(meta.labelKey)}
         </span>
         {token.section && (
           <button
@@ -189,7 +191,7 @@ function Row({ token, onJumpToGroup }: { token: AnalyzedToken; onJumpToGroup?: (
         )}
         {token.status === "excel" && token.excel?.top && (
           <span className="inline-flex w-fit items-center gap-1 text-[10px] text-[oklch(0.82_0.16_85)]">
-            <Star className="h-3 w-3 fill-current" /> Top 20
+            <Star className="h-3 w-3 fill-current" /> {t("analyzer.top20")}
           </span>
         )}
       </div>
@@ -198,12 +200,12 @@ function Row({ token, onJumpToGroup }: { token: AnalyzedToken; onJumpToGroup?: (
         <code className="font-mono text-sm font-semibold text-foreground">{token.token}</code>
         {token.canonical && (
           <span className="ml-2 text-xs text-muted-foreground">
-            → use <code className="font-mono text-foreground">{token.canonical}</code>
+            → {t("analyzer.use")} <code className="font-mono text-foreground">{token.canonical}</code>
           </span>
         )}
         {token.status === "excel" && token.excel && (
           <span className="ml-2 text-xs text-muted-foreground">
-            → equivalente SQL: <code className="font-mono text-primary">{token.excel.sql}</code>
+            → {t("analyzer.sqlEquivalent")} <code className="font-mono text-primary">{token.excel.sql}</code>
           </span>
         )}
         {message && <p className="mt-1 text-xs text-muted-foreground">{message}</p>}

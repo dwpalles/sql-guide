@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ArrowRight, KeyRound, Link2 } from "lucide-react";
 import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS } from "@/data/schema";
+import { useT } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 // Each table gets its own distinct color so FK badges and table headers visually match.
@@ -31,6 +32,7 @@ const EDGE_BY_FK = new Map<string, Edge>();
 for (const e of EDGES) EDGE_BY_FK.set(`${e.fromTable}.${e.fromCol}`, e);
 
 export function ErdDiagram() {
+  const t = useT();
   // hovered = either a table name OR a "tabela.coluna" key — both highlight related items.
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -38,7 +40,7 @@ export function ErdDiagram() {
     if (!hovered) return new Set<string>();
     const set = new Set<string>();
     // Hovered a table directly
-    if (SCHEMA_TABLES.some((t) => t.name === hovered)) {
+    if (SCHEMA_TABLES.some((tbl) => tbl.name === hovered)) {
       set.add(hovered);
       // also light up any table connected to it
       for (const e of EDGES) {
@@ -69,10 +71,8 @@ export function ErdDiagram() {
   return (
     <div className="flex h-full flex-col">
       <div className="mb-3">
-        <h2 className="text-sm font-semibold text-foreground">Schema E-commerce</h2>
-        <p className="text-xs text-muted-foreground">
-          Diagrama ERD · 🔑 PK · 🔗 FK · passe o mouse para destacar relacionamentos
-        </p>
+        <h2 className="text-sm font-semibold text-foreground">{t("erd.title")}</h2>
+        <p className="text-xs text-muted-foreground">{t("erd.subtitle")}</p>
       </div>
 
       {/* Legenda visual de relacionamentos */}
@@ -121,15 +121,15 @@ export function ErdDiagram() {
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {SCHEMA_TABLES.map((t) => {
-          const color = TABLE_COLORS[t.name] ?? "var(--primary)";
-          const highlighted = isTableHighlighted(t.name);
-          const dimmed = isTableDimmed(t.name);
+        {SCHEMA_TABLES.map((tbl) => {
+          const color = TABLE_COLORS[tbl.name] ?? "var(--primary)";
+          const highlighted = isTableHighlighted(tbl.name);
+          const dimmed = isTableDimmed(tbl.name);
           return (
             <div
-              key={t.name}
-              id={`erd-table-${t.name}`}
-              onMouseEnter={() => setHovered(t.name)}
+              key={tbl.name}
+              id={`erd-table-${tbl.name}`}
+              onMouseEnter={() => setHovered(tbl.name)}
               onMouseLeave={() => setHovered(null)}
               className={cn(
                 "rounded-md border bg-code-bg p-3 shadow-sm transition-all",
@@ -154,7 +154,7 @@ export function ErdDiagram() {
                   borderColor: `color-mix(in oklab, ${color} 30%, transparent)`,
                 }}
               >
-                <span>{t.name}</span>
+                <span>{tbl.name}</span>
                 <span
                   className="inline-block h-2 w-2 rounded-full"
                   style={{ background: color }}
@@ -162,8 +162,8 @@ export function ErdDiagram() {
                 />
               </div>
               <ul className="flex flex-col gap-1">
-                {t.columns.map((c) => {
-                  const colKey = `${t.name}.${c.name}`;
+                {tbl.columns.map((c) => {
+                  const colKey = `${tbl.name}.${c.name}`;
                   const edge = EDGE_BY_FK.get(colKey);
                   const isFkHovered = hovered === colKey;
                   return (
@@ -208,7 +208,7 @@ export function ErdDiagram() {
                             background: `color-mix(in oklab, ${TABLE_COLORS[edge.toTable]} 16%, transparent)`,
                             border: `1px solid color-mix(in oklab, ${TABLE_COLORS[edge.toTable]} 35%, transparent)`,
                           }}
-                          title={`Vai para ${edge.toTable}.${edge.toCol}`}
+                          title={`${t("erd.goTo")} ${edge.toTable}.${edge.toCol}`}
                         >
                           <ArrowRight className="h-2.5 w-2.5" />
                           {edge.toTable}.{edge.toCol}
