@@ -32,6 +32,7 @@ const EDGE_BY_FK = new Map<string, Edge>();
 for (const e of EDGES) EDGE_BY_FK.set(`${e.fromTable}.${e.fromCol}`, e);
 
 export function ErdDiagram() {
+  const t = useT();
   // hovered = either a table name OR a "tabela.coluna" key — both highlight related items.
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -70,10 +71,8 @@ export function ErdDiagram() {
   return (
     <div className="flex h-full flex-col">
       <div className="mb-3">
-        <h2 className="text-sm font-semibold text-foreground">Schema E-commerce</h2>
-        <p className="text-xs text-muted-foreground">
-          Diagrama ERD · 🔑 PK · 🔗 FK · passe o mouse para destacar relacionamentos
-        </p>
+        <h2 className="text-sm font-semibold text-foreground">{t("erd.title")}</h2>
+        <p className="text-xs text-muted-foreground">{t("erd.subtitle")}</p>
       </div>
 
       {/* Legenda visual de relacionamentos */}
