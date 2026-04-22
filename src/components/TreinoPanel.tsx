@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, Eye, EyeOff, RotateCcw, Sparkles, BookOpen, Code2 } from "lucide-react";
 import { EXERCISES } from "@/data/treinoExercises";
+import { exerciseTitle, exercisePrompt } from "@/data/treinoExercisesI18n";
 import { CodeBlock } from "@/components/CodeBlock";
 import { explainSql, type ExplainStep } from "@/lib/sqlExplainer";
 import { useI18n, useT } from "@/i18n";
@@ -64,6 +65,7 @@ function TabButton({
 
 function ExercisesView() {
   const t = useT();
+  const { lang } = useI18n();
   const [index, setIndex] = useState(0);
   const [userSql, setUserSql] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
@@ -118,9 +120,9 @@ function ExercisesView() {
           >
             {t(levelKey)}
           </span>
-          <h3 className="text-sm font-semibold text-foreground">{ex.title}</h3>
+          <h3 className="text-sm font-semibold text-foreground">{exerciseTitle(ex, lang)}</h3>
         </div>
-        <p className="text-sm text-muted-foreground">{ex.prompt}</p>
+        <p className="text-sm text-muted-foreground">{exercisePrompt(ex, lang)}</p>
       </div>
 
       <div className="mt-4 flex flex-1 flex-col">
