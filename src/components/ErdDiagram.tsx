@@ -155,18 +155,25 @@ export function ErdDiagram() {
               }
             >
               <div
-                className="mb-2 flex items-center justify-between border-b pb-1.5 font-mono text-sm font-semibold"
+                className="mb-2 border-b pb-1.5"
                 style={{
-                  color,
                   borderColor: `color-mix(in oklab, ${color} 30%, transparent)`,
                 }}
               >
-                <span>{tbl.name}</span>
-                <span
-                  className="inline-block h-2 w-2 rounded-full"
-                  style={{ background: color }}
-                  aria-hidden
-                />
+                <div
+                  className="flex items-center justify-between font-mono text-sm font-semibold"
+                  style={{ color }}
+                >
+                  <span title={tableDesc(tbl, lang)}>{tbl.name}</span>
+                  <span
+                    className="inline-block h-2 w-2 rounded-full"
+                    style={{ background: color }}
+                    aria-hidden
+                  />
+                </div>
+                <div className="mt-0.5 text-[10px] font-normal text-muted-foreground">
+                  {tableLabel(tbl, lang)}
+                </div>
               </div>
               <ul className="flex flex-col gap-1">
                 {tbl.columns.map((c) => {
