@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Database, ChevronDown, Activity, FileSpreadsheet, Heart } from "lucide-react";
 import { SQL_GROUPS, type SqlGroup, type SqlRow } from "@/data/sqlCommands";
 import { groupFull, groupNote, groupLabel, rowDescription } from "@/data/sqlCommandsI18n";
@@ -21,6 +22,8 @@ const PINK = "oklch(0.78 0.16 320)";
 const GOLD = "oklch(0.82 0.16 85)";
 // Vermelho/rosa do coração para favoritos.
 const FAV_RED = "oklch(0.72 0.2 20)";
+// Verde para o atalho mobile "SQL".
+const GREEN = "oklch(0.78 0.18 150)";
 
 export function ReferenceTab() {
   const t = useT();
@@ -187,6 +190,16 @@ export function ReferenceTab() {
             onClick={() => setFilter(EXCEL_ID)}
             variant="excel"
           />
+          {/* Mobile-only green "SQL" link to A→Z list page */}
+          {isMobile && (
+            <Link
+              to="/sql"
+              className="inline-flex h-7 items-center gap-1.5 rounded-full border px-3 text-[11px] font-semibold uppercase tracking-wider transition"
+              style={{ color: GREEN, background: "transparent", borderColor: GREEN }}
+            >
+              {t("nav.sql")}
+            </Link>
+          )}
           {/* Group pills only hidden on phones (<640px). At sm+ they always render. */}
           {!isMobile &&
             sortedGroups.map((g) => (

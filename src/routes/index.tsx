@@ -39,23 +39,17 @@ function Index() {
               SQL<span className="text-muted-foreground">.ref</span>
             </span>
           </div>
-          <nav className="ml-2 flex items-center gap-1">
+          {/* Desktop nav (sm+ only) */}
+          <nav className="ml-2 hidden sm:flex items-center gap-1">
             <Link
               to="/"
               className="rounded-md border border-primary bg-primary/15 px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary"
             >
               {t("nav.codigos")}
             </Link>
-            {/* SQL tab is mobile-only (<640px). Hidden at sm+. */}
-            <Link
-              to="/sql"
-              className="sm:hidden inline-flex items-center rounded-md px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:bg-secondary hover:text-foreground"
-            >
-              {t("nav.sql")}
-            </Link>
             <Link
               to="/treino"
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:bg-secondary hover:text-foreground"
+              className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
               <Dumbbell className="h-3.5 w-3.5" />
               {t("nav.treino")}
@@ -74,8 +68,7 @@ function Index() {
         <ReferenceTab />
       </main>
 
-      <footer className="mx-auto max-w-[1400px] border-t border-border px-4 py-6 text-xs text-muted-foreground sm:px-6 lg:px-8">
-        {t("footer.main")}
+      <footer className="mx-auto max-w-[1400px]">
         <WhyBrand />
       </footer>
     </div>

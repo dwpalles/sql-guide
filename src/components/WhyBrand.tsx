@@ -9,7 +9,7 @@ export function WhyBrand() {
   const t = useT();
   return (
     <div
-      className="mt-4 flex items-center justify-center gap-3 rounded-md px-4 py-3 text-[11px]"
+      className="flex items-center justify-center gap-3 text-[11px]"
       style={{ background: "#111", color: "#9aa0a6" }}
     >
       <span>{t("footer.developedBy")}</span>

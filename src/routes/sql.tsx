@@ -134,8 +134,7 @@ function SqlPage() {
         </ul>
       </main>
 
-      <footer className="mx-auto max-w-[1400px] border-t border-border px-4 py-6 text-xs text-muted-foreground">
-        {t("footer.main")}
+      <footer className="mx-auto max-w-[1400px]">
         <WhyBrand />
       </footer>
     </div>
