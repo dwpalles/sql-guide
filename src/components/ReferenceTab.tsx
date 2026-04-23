@@ -140,22 +140,9 @@ export function ReferenceTab() {
       </aside>
 
       <div className="min-w-0">
-        <div className="mb-4 flex flex-wrap items-center gap-2">
-          <button
-            onClick={() => setSchemaOpen((o) => !o)}
-            className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-border bg-secondary/40 px-3 py-2 text-xs font-medium text-foreground hover:border-primary"
-          >
-            <Database className="h-3.5 w-3.5" />
-            {t("schema.toggle")}
-            <ChevronDown className={cn("h-3.5 w-3.5 transition", schemaOpen && "rotate-180")} />
-          </button>
-        </div>
-
-        {schemaOpen && <SchemaPanel />}
-
-        <div className="mb-5 flex flex-col gap-2 lg:hidden">
-          {/* Favoritos pill (heart only) above the two existing pills */}
-          <div className="flex flex-wrap gap-1.5">
+        {/* Linha 1: Favoritos (♥) + Schema E-commerce */}
+        <div className="mb-4 flex flex-wrap items-center gap-2 lg:justify-end">
+          <div className="lg:hidden">
             <FilterPill
               label=""
               ariaLabel={t("sidebar.favorites")}
@@ -172,32 +159,45 @@ export function ReferenceTab() {
               iconOnly
             />
           </div>
-          <div className="flex flex-wrap gap-1.5">
-            <FilterPill
-              label={t("sidebar.sqlDoctor")}
-              icon={<Activity className="h-3 w-3" />}
-              active={filter === ANALYZER_ID}
-              onClick={() => setFilter(ANALYZER_ID)}
-              variant="analyzer"
-            />
-            <FilterPill
-              label={t("sidebar.excelToSql")}
-              icon={<FileSpreadsheet className="h-3 w-3" />}
-              active={filter === EXCEL_ID}
-              onClick={() => setFilter(EXCEL_ID)}
-              variant="excel"
-            />
-            {/* Group pills only hidden on phones (<640px). At sm+ they always render. */}
-            {!isMobile &&
-              sortedGroups.map((g) => (
-                <FilterPill
-                  key={g.id}
-                  label={groupLabel(g, lang).toUpperCase()}
-                  color={g.color}
-                  active={filter === g.id}
-                  onClick={() => setFilter(g.id)}
-                />
-              ))}
+          <button
+            onClick={() => setSchemaOpen((o) => !o)}
+            className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-border bg-secondary/40 px-3 py-2 text-xs font-medium text-foreground hover:border-primary"
+          >
+            <Database className="h-3.5 w-3.5" />
+            {t("schema.toggle")}
+            <ChevronDown className={cn("h-3.5 w-3.5 transition", schemaOpen && "rotate-180")} />
+          </button>
+        </div>
+
+        {schemaOpen && <SchemaPanel />}
+
+        {/* Linha 2: SQL Doctor + Excel → SQL (+ pills de categorias em sm+) */}
+        <div className="mb-5 flex flex-wrap gap-1.5 lg:hidden">
+          <FilterPill
+            label={t("sidebar.sqlDoctor")}
+            icon={<Activity className="h-3 w-3" />}
+            active={filter === ANALYZER_ID}
+            onClick={() => setFilter(ANALYZER_ID)}
+            variant="analyzer"
+          />
+          <FilterPill
+            label={t("sidebar.excelToSql")}
+            icon={<FileSpreadsheet className="h-3 w-3" />}
+            active={filter === EXCEL_ID}
+            onClick={() => setFilter(EXCEL_ID)}
+            variant="excel"
+          />
+          {/* Group pills only hidden on phones (<640px). At sm+ they always render. */}
+          {!isMobile &&
+            sortedGroups.map((g) => (
+              <FilterPill
+                key={g.id}
+                label={groupLabel(g, lang).toUpperCase()}
+                color={g.color}
+                active={filter === g.id}
+                onClick={() => setFilter(g.id)}
+              />
+            ))}
           </div>
         </div>
 
