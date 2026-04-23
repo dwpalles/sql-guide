@@ -68,8 +68,7 @@ function Index() {
         <ReferenceTab />
       </main>
 
-      <footer className="mx-auto max-w-[1400px] border-t border-border px-4 py-6 text-xs text-muted-foreground sm:px-6 lg:px-8">
-        {t("footer.main")}
+      <footer className="mx-auto max-w-[1400px]">
         <WhyBrand />
       </footer>
     </div>
