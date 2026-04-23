@@ -63,6 +63,12 @@ export function SqlAnalyzerPanel({ onJumpToGroup }: Props) {
         spellCheck={false}
         placeholder={t("analyzer.placeholder")}
         className="min-h-[160px] w-full rounded-lg border border-border bg-code-bg p-3 font-mono text-sm leading-relaxed text-foreground outline-none focus:border-primary"
+        style={{
+          backgroundImage: `url(${whyLogo})`,
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          backgroundSize: "40%",
+        }}
       />
 
       {/* Explicação automática em tempo real */}
