@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Database, ChevronDown, Activity, FileSpreadsheet, Heart } from "lucide-react";
 import { SQL_GROUPS, type SqlGroup, type SqlRow } from "@/data/sqlCommands";
 import { groupFull, groupNote, groupLabel, rowDescription } from "@/data/sqlCommandsI18n";
