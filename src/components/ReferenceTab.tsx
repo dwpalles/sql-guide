@@ -198,7 +198,6 @@ export function ReferenceTab() {
                 onClick={() => setFilter(g.id)}
               />
             ))}
-          </div>
         </div>
 
         <div className="space-y-8">
