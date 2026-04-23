@@ -366,6 +366,67 @@ export function ReferenceTab() {
               <SqlAnalyzerPanel onJumpToGroup={jumpToGroup} />
             </section>
           )}
+
+          {showAllSql && (
+            <section
+              ref={(el) => {
+                sectionRefs.current[ALL_SQL_ID] = el;
+              }}
+            >
+              <div className="mb-3 flex flex-wrap items-center gap-3">
+                <span
+                  className="inline-flex h-6 items-center gap-1 rounded-md border px-2 text-[11px] font-semibold uppercase tracking-wider"
+                  style={{
+                    color: GREEN,
+                    background: `color-mix(in oklab, ${GREEN} 12%, transparent)`,
+                    borderColor: `color-mix(in oklab, ${GREEN} 35%, transparent)`,
+                  }}
+                >
+                  {t("nav.sql")}
+                </span>
+                <span className="text-xs text-muted-foreground">{allSqlRows.length}</span>
+              </div>
+              <ul className="space-y-3">
+                {allSqlRows.map(({ group, row }, i) => {
+                  const k = favKey(group.id, row.name);
+                  const fav = isFav(k);
+                  return (
+                    <li
+                      key={i}
+                      className="rounded-lg border border-border bg-card p-3"
+                    >
+                      <div className="flex items-start gap-2">
+                        <FavButton active={fav} onClick={() => toggle(k)} />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <code className="break-all font-mono text-sm font-semibold text-foreground">
+                              {row.name}
+                            </code>
+                            <span
+                              className="inline-flex h-5 items-center rounded border px-1.5 text-[10px] font-semibold uppercase tracking-wider"
+                              style={{
+                                color: group.color,
+                                background: group.bg,
+                                borderColor: `color-mix(in oklab, ${group.color} 35%, transparent)`,
+                              }}
+                            >
+                              {groupLabel(group, lang)}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {rowDescription(group.id, row, lang)}
+                          </p>
+                          <div className="mt-2">
+                            <CodeBlock code={row.example} />
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          )}
         </div>
       </div>
     </div>
