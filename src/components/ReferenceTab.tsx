@@ -14,7 +14,8 @@ import { cn } from "@/lib/utils";
 const ANALYZER_ID = "analisador";
 const EXCEL_ID = "excel";
 const FAVORITES_ID = "favoritos";
-type FilterId = "analisador" | "excel" | "favoritos" | string;
+const ALL_SQL_ID = "all-sql";
+type FilterId = "analisador" | "excel" | "favoritos" | "all-sql" | string;
 
 // Cor rosa do code-keyword usada para o SQL Doctor.
 const PINK = "oklch(0.78 0.16 320)";
