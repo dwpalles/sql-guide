@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { Database, ChevronDown, Activity, FileSpreadsheet, Heart } from "lucide-react";
 import { SQL_GROUPS, type SqlGroup, type SqlRow } from "@/data/sqlCommands";
 import { groupFull, groupNote, groupLabel, rowDescription } from "@/data/sqlCommandsI18n";
@@ -14,7 +13,8 @@ import { cn } from "@/lib/utils";
 const ANALYZER_ID = "analisador";
 const EXCEL_ID = "excel";
 const FAVORITES_ID = "favoritos";
-type FilterId = "analisador" | "excel" | "favoritos" | string;
+const ALL_SQL_ID = "all-sql";
+type FilterId = "analisador" | "excel" | "favoritos" | "all-sql" | string;
 
 // Cor rosa do code-keyword usada para o SQL Doctor.
 const PINK = "oklch(0.78 0.16 320)";
@@ -49,7 +49,8 @@ export function ReferenceTab() {
       isMobile &&
       filter !== ANALYZER_ID &&
       filter !== EXCEL_ID &&
-      filter !== FAVORITES_ID
+      filter !== FAVORITES_ID &&
+      filter !== ALL_SQL_ID
     ) {
       setFilter(ANALYZER_ID);
     }
@@ -67,10 +68,18 @@ export function ReferenceTab() {
   const showAnalyzer = filter === ANALYZER_ID;
   const showExcel = filter === EXCEL_ID;
   const showFavorites = filter === FAVORITES_ID;
+  const showAllSql = filter === ALL_SQL_ID;
   const visibleGroups =
-    showAnalyzer || showExcel || showFavorites
+    showAnalyzer || showExcel || showFavorites || showAllSql
       ? []
       : sortedGroups.filter((g) => g.id === filter);
+
+  // Flat A→Z list of every command across every group.
+  const allSqlRows: { group: SqlGroup; row: SqlRow }[] = [];
+  for (const g of SQL_GROUPS) {
+    for (const r of g.rows) allSqlRows.push({ group: g, row: r });
+  }
+  allSqlRows.sort((a, b) => a.row.name.localeCompare(b.row.name, "pt-BR"));
 
   // Flat favorites list (across all groups, A→Z by command name).
   const favoriteRows: { group: SqlGroup; row: SqlRow }[] = [];
@@ -190,15 +199,14 @@ export function ReferenceTab() {
             onClick={() => setFilter(EXCEL_ID)}
             variant="excel"
           />
-          {/* Mobile-only green "SQL" link to A→Z list page */}
+          {/* Mobile-only green "SQL" pill — inline A→Z list view */}
           {isMobile && (
-            <Link
-              to="/sql"
-              className="inline-flex h-7 items-center gap-1.5 rounded-full border px-3 text-[11px] font-semibold uppercase tracking-wider transition"
-              style={{ color: GREEN, background: "transparent", borderColor: GREEN }}
-            >
-              {t("nav.sql")}
-            </Link>
+            <FilterPill
+              label={t("nav.sql")}
+              active={filter === ALL_SQL_ID}
+              onClick={() => setFilter(ALL_SQL_ID)}
+              variant="allsql"
+            />
           )}
           {/* Group pills only hidden on phones (<640px). At sm+ they always render. */}
           {!isMobile &&
@@ -357,6 +365,67 @@ export function ReferenceTab() {
               <SqlAnalyzerPanel onJumpToGroup={jumpToGroup} />
             </section>
           )}
+
+          {showAllSql && (
+            <section
+              ref={(el) => {
+                sectionRefs.current[ALL_SQL_ID] = el;
+              }}
+            >
+              <div className="mb-3 flex flex-wrap items-center gap-3">
+                <span
+                  className="inline-flex h-6 items-center gap-1 rounded-md border px-2 text-[11px] font-semibold uppercase tracking-wider"
+                  style={{
+                    color: GREEN,
+                    background: `color-mix(in oklab, ${GREEN} 12%, transparent)`,
+                    borderColor: `color-mix(in oklab, ${GREEN} 35%, transparent)`,
+                  }}
+                >
+                  {t("nav.sql")}
+                </span>
+                <span className="text-xs text-muted-foreground">{allSqlRows.length}</span>
+              </div>
+              <ul className="space-y-3">
+                {allSqlRows.map(({ group, row }, i) => {
+                  const k = favKey(group.id, row.name);
+                  const fav = isFav(k);
+                  return (
+                    <li
+                      key={i}
+                      className="rounded-lg border border-border bg-card p-3"
+                    >
+                      <div className="flex items-start gap-2">
+                        <FavButton active={fav} onClick={() => toggle(k)} />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <code className="break-all font-mono text-sm font-semibold text-foreground">
+                              {row.name}
+                            </code>
+                            <span
+                              className="inline-flex h-5 items-center rounded border px-1.5 text-[10px] font-semibold uppercase tracking-wider"
+                              style={{
+                                color: group.color,
+                                background: group.bg,
+                                borderColor: `color-mix(in oklab, ${group.color} 35%, transparent)`,
+                              }}
+                            >
+                              {groupLabel(group, lang)}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {rowDescription(group.id, row, lang)}
+                          </p>
+                          <div className="mt-2">
+                            <CodeBlock code={row.example} />
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          )}
         </div>
       </div>
     </div>
@@ -489,7 +558,7 @@ function FilterPill({
   active: boolean;
   onClick: () => void;
   icon?: React.ReactNode;
-  variant?: "analyzer" | "excel" | "favorites";
+  variant?: "analyzer" | "excel" | "favorites" | "allsql";
   count?: number;
   iconOnly?: boolean;
   ariaLabel?: string;
@@ -501,10 +570,17 @@ function FilterPill({
         ? GOLD
         : variant === "favorites"
           ? FAV_RED
-          : (color ?? "#7d8590");
+          : variant === "allsql"
+            ? GREEN
+            : (color ?? "#7d8590");
 
   let style: React.CSSProperties;
-  if (variant === "analyzer" || variant === "excel" || variant === "favorites") {
+  if (
+    variant === "analyzer" ||
+    variant === "excel" ||
+    variant === "favorites" ||
+    variant === "allsql"
+  ) {
     style = active
       ? { color: "#000", background: c, borderColor: "#000" }
       : { color: c, background: "transparent", borderColor: c };
