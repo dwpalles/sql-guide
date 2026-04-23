@@ -22,6 +22,8 @@ const PINK = "oklch(0.78 0.16 320)";
 const GOLD = "oklch(0.82 0.16 85)";
 // Vermelho/rosa do coração para favoritos.
 const FAV_RED = "oklch(0.72 0.2 20)";
+// Verde para o atalho mobile "SQL".
+const GREEN = "oklch(0.78 0.18 150)";
 
 export function ReferenceTab() {
   const t = useT();
