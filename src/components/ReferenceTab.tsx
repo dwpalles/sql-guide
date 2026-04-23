@@ -200,15 +200,14 @@ export function ReferenceTab() {
             onClick={() => setFilter(EXCEL_ID)}
             variant="excel"
           />
-          {/* Mobile-only green "SQL" link to A→Z list page */}
+          {/* Mobile-only green "SQL" pill — inline A→Z list view */}
           {isMobile && (
-            <Link
-              to="/sql"
-              className="inline-flex h-7 items-center gap-1.5 rounded-full border px-3 text-[11px] font-semibold uppercase tracking-wider transition"
-              style={{ color: GREEN, background: "transparent", borderColor: GREEN }}
-            >
-              {t("nav.sql")}
-            </Link>
+            <FilterPill
+              label={t("nav.sql")}
+              active={filter === ALL_SQL_ID}
+              onClick={() => setFilter(ALL_SQL_ID)}
+              variant="allsql"
+            />
           )}
           {/* Group pills only hidden on phones (<640px). At sm+ they always render. */}
           {!isMobile &&
