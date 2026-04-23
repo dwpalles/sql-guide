@@ -57,19 +57,24 @@ export function SqlAnalyzerPanel({ onJumpToGroup }: Props) {
         <p className="mt-1 text-sm text-muted-foreground">{t("analyzer.intro")}</p>
       </div>
 
-      <textarea
-        value={code}
-        onChange={(e) => setCode(e.target.value)}
-        spellCheck={false}
-        placeholder={t("analyzer.placeholder")}
-        className="min-h-[160px] w-full rounded-lg border border-border bg-code-bg p-3 font-mono text-sm leading-relaxed text-foreground outline-none focus:border-primary"
-        style={{
-          backgroundImage: `url(${whyLogo})`,
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-          backgroundSize: "40%",
-        }}
-      />
+      <div className="relative">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-lg bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url(${whyLogo})`,
+            backgroundSize: "40%",
+            opacity: 0.08,
+          }}
+        />
+        <textarea
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          spellCheck={false}
+          placeholder={t("analyzer.placeholder")}
+          className="relative min-h-[160px] w-full rounded-lg border border-border bg-transparent p-3 font-mono text-sm leading-relaxed text-foreground outline-none focus:border-primary"
+        />
+      </div>
 
       {/* Explicação automática em tempo real */}
       <div className="mt-3 rounded-lg border border-border bg-card/40">
