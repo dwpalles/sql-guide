@@ -498,7 +498,7 @@ function FilterPill({
   active: boolean;
   onClick: () => void;
   icon?: React.ReactNode;
-  variant?: "analyzer" | "excel" | "favorites";
+  variant?: "analyzer" | "excel" | "favorites" | "allsql";
   count?: number;
   iconOnly?: boolean;
   ariaLabel?: string;
@@ -510,10 +510,17 @@ function FilterPill({
         ? GOLD
         : variant === "favorites"
           ? FAV_RED
-          : (color ?? "#7d8590");
+          : variant === "allsql"
+            ? GREEN
+            : (color ?? "#7d8590");
 
   let style: React.CSSProperties;
-  if (variant === "analyzer" || variant === "excel" || variant === "favorites") {
+  if (
+    variant === "analyzer" ||
+    variant === "excel" ||
+    variant === "favorites" ||
+    variant === "allsql"
+  ) {
     style = active
       ? { color: "#000", background: c, borderColor: "#000" }
       : { color: c, background: "transparent", borderColor: c };
