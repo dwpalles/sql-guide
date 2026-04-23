@@ -62,6 +62,27 @@ const DICT = {
   "sidebar.categories": { pt: "Categorias", en: "Categories", es: "Categorías", fr: "Catégories" },
   "sidebar.sqlDoctor": { pt: "SQL DOCTOR", en: "SQL DOCTOR", es: "SQL DOCTOR", fr: "SQL DOCTOR" },
   "sidebar.excelToSql": { pt: "EXCEL → SQL", en: "EXCEL → SQL", es: "EXCEL → SQL", fr: "EXCEL → SQL" },
+  "sidebar.favorites": { pt: "Favoritos", en: "Favorites", es: "Favoritos", fr: "Favoris" },
+  "favorites.empty": {
+    pt: "Nenhum favorito ainda. Toque no ♥ ao lado de um comando para favoritá-lo.",
+    en: "No favorites yet. Tap the ♥ next to a command to favorite it.",
+    es: "Sin favoritos aún. Toca el ♥ junto a un comando para añadirlo.",
+    fr: "Aucun favori. Touchez le ♥ à côté d'une commande pour l'ajouter.",
+  },
+  "favorites.title": { pt: "Favoritos", en: "Favorites", es: "Favoritos", fr: "Favoris" },
+  "nav.sql": { pt: "SQL", en: "SQL", es: "SQL", fr: "SQL" },
+  "sql.all.title": {
+    pt: "Todos os comandos SQL",
+    en: "All SQL commands",
+    es: "Todos los comandos SQL",
+    fr: "Toutes les commandes SQL",
+  },
+  "sql.all.subtitle": {
+    pt: "Lista única, A→Z. Toque no ♥ para favoritar.",
+    en: "Single list, A→Z. Tap ♥ to favorite.",
+    es: "Lista única, A→Z. Toca ♥ para añadir.",
+    fr: "Liste unique, A→Z. Touchez ♥ pour ajouter.",
+  },
 
   // Schema panel
   "schema.toggle": {

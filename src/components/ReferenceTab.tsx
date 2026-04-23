@@ -1,34 +1,37 @@
 import { useEffect, useRef, useState } from "react";
-import { Database, ChevronDown, Activity, FileSpreadsheet } from "lucide-react";
-import { SQL_GROUPS, type SqlGroup } from "@/data/sqlCommands";
+import { Database, ChevronDown, Activity, FileSpreadsheet, Heart } from "lucide-react";
+import { SQL_GROUPS, type SqlGroup, type SqlRow } from "@/data/sqlCommands";
 import { groupFull, groupNote, groupLabel, rowDescription } from "@/data/sqlCommandsI18n";
 import { SCHEMA_TABLES, SCHEMA_RELATIONSHIPS, tableLabel, columnLabel } from "@/data/schema";
 import { CodeBlock } from "@/components/CodeBlock";
 import { SqlAnalyzerPanel } from "@/components/SqlAnalyzerPanel";
 import { ExcelSqlPanel } from "@/components/ExcelSqlPanel";
 import { useI18n, useT } from "@/i18n";
+import { useFavorites, favKey } from "@/hooks/useFavorites";
 import { cn } from "@/lib/utils";
 
 const ANALYZER_ID = "analisador";
 const EXCEL_ID = "excel";
-type FilterId = "analisador" | "excel" | string;
+const FAVORITES_ID = "favoritos";
+type FilterId = "analisador" | "excel" | "favoritos" | string;
 
 // Cor rosa do code-keyword usada para o SQL Doctor.
 const PINK = "oklch(0.78 0.16 320)";
 // Dourado/amarelo do Excel.
 const GOLD = "oklch(0.82 0.16 85)";
+// Vermelho/rosa do coração para favoritos.
+const FAV_RED = "oklch(0.72 0.2 20)";
 
 export function ReferenceTab() {
   const t = useT();
   const { lang } = useI18n();
+  const { favs, toggle, isFav } = useFavorites();
   // SQL Doctor é a tela de entrada por padrão (primeiro item da sidebar).
   const [filter, setFilter] = useState<FilterId>(ANALYZER_ID);
   const [schemaOpen, setSchemaOpen] = useState(false);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   // Detect mobile-only layout (<640px = below Tailwind `sm`).
-  // At >=640px, ALL pills, sidebar entries and the TREINO tab remain visible
-  // (they may wrap or scroll horizontally, but never disappear).
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -39,7 +42,12 @@ export function ReferenceTab() {
     return () => mql.removeEventListener("change", update);
   }, []);
   useEffect(() => {
-    if (isMobile && filter !== ANALYZER_ID && filter !== EXCEL_ID) {
+    if (
+      isMobile &&
+      filter !== ANALYZER_ID &&
+      filter !== EXCEL_ID &&
+      filter !== FAVORITES_ID
+    ) {
       setFilter(ANALYZER_ID);
     }
   }, [isMobile, filter]);
@@ -55,10 +63,20 @@ export function ReferenceTab() {
 
   const showAnalyzer = filter === ANALYZER_ID;
   const showExcel = filter === EXCEL_ID;
+  const showFavorites = filter === FAVORITES_ID;
   const visibleGroups =
-    filter === ANALYZER_ID || filter === EXCEL_ID
+    showAnalyzer || showExcel || showFavorites
       ? []
       : sortedGroups.filter((g) => g.id === filter);
+
+  // Flat favorites list (across all groups, A→Z by command name).
+  const favoriteRows: { group: SqlGroup; row: SqlRow }[] = [];
+  for (const g of SQL_GROUPS) {
+    for (const r of g.rows) {
+      if (favs.has(favKey(g.id, r.name))) favoriteRows.push({ group: g, row: r });
+    }
+  }
+  favoriteRows.sort((a, b) => a.row.name.localeCompare(b.row.name, "pt-BR"));
 
   const jumpToGroup = (id: string) => {
     setFilter(id);
@@ -74,6 +92,24 @@ export function ReferenceTab() {
           {t("sidebar.categories")}
         </div>
         <div className="mt-2 flex flex-col gap-0.5">
+          {/* Favoritos: heart-only entry above the two existing pills */}
+          <SidebarLink
+            label=""
+            ariaLabel={t("sidebar.favorites")}
+            icon={
+              <Heart
+                className="h-3.5 w-3.5"
+                style={{ color: FAV_RED }}
+                fill={favs.size > 0 ? FAV_RED : "none"}
+              />
+            }
+            active={filter === FAVORITES_ID}
+            onClick={() => setFilter(FAVORITES_ID)}
+            bold
+            colorOverride={FAV_RED}
+            count={favs.size > 0 ? favs.size : undefined}
+            iconOnly
+          />
           <SidebarLink
             label={t("sidebar.sqlDoctor")}
             icon={<Activity className="h-3.5 w-3.5" style={{ color: PINK }} />}
@@ -117,32 +153,52 @@ export function ReferenceTab() {
 
         {schemaOpen && <SchemaPanel />}
 
-        <div className="mb-5 flex flex-wrap gap-1.5 lg:hidden">
-          <FilterPill
-            label={t("sidebar.sqlDoctor")}
-            icon={<Activity className="h-3 w-3" />}
-            active={filter === ANALYZER_ID}
-            onClick={() => setFilter(ANALYZER_ID)}
-            variant="analyzer"
-          />
-          <FilterPill
-            label={t("sidebar.excelToSql")}
-            icon={<FileSpreadsheet className="h-3 w-3" />}
-            active={filter === EXCEL_ID}
-            onClick={() => setFilter(EXCEL_ID)}
-            variant="excel"
-          />
-          {/* Group pills only hidden on phones (<640px). At sm+ they always render. */}
-          {!isMobile &&
-            sortedGroups.map((g) => (
-              <FilterPill
-                key={g.id}
-                label={groupLabel(g, lang).toUpperCase()}
-                color={g.color}
-                active={filter === g.id}
-                onClick={() => setFilter(g.id)}
-              />
-            ))}
+        <div className="mb-5 flex flex-col gap-2 lg:hidden">
+          {/* Favoritos pill (heart only) above the two existing pills */}
+          <div className="flex flex-wrap gap-1.5">
+            <FilterPill
+              label=""
+              ariaLabel={t("sidebar.favorites")}
+              icon={
+                <Heart
+                  className="h-3.5 w-3.5"
+                  fill={favs.size > 0 ? "currentColor" : "none"}
+                />
+              }
+              active={filter === FAVORITES_ID}
+              onClick={() => setFilter(FAVORITES_ID)}
+              variant="favorites"
+              count={favs.size > 0 ? favs.size : undefined}
+              iconOnly
+            />
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            <FilterPill
+              label={t("sidebar.sqlDoctor")}
+              icon={<Activity className="h-3 w-3" />}
+              active={filter === ANALYZER_ID}
+              onClick={() => setFilter(ANALYZER_ID)}
+              variant="analyzer"
+            />
+            <FilterPill
+              label={t("sidebar.excelToSql")}
+              icon={<FileSpreadsheet className="h-3 w-3" />}
+              active={filter === EXCEL_ID}
+              onClick={() => setFilter(EXCEL_ID)}
+              variant="excel"
+            />
+            {/* Group pills only hidden on phones (<640px). At sm+ they always render. */}
+            {!isMobile &&
+              sortedGroups.map((g) => (
+                <FilterPill
+                  key={g.id}
+                  label={groupLabel(g, lang).toUpperCase()}
+                  color={g.color}
+                  active={filter === g.id}
+                  onClick={() => setFilter(g.id)}
+                />
+              ))}
+          </div>
         </div>
 
         <div className="space-y-8">
@@ -158,32 +214,115 @@ export function ReferenceTab() {
                 <table className="w-full text-sm">
                   <thead className="bg-secondary/40 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     <tr>
-                      <th className="w-[28%] px-4 py-2 text-left">{t("table.command")}</th>
+                      <th className="w-10 px-2 py-2"></th>
+                      <th className="w-[26%] px-4 py-2 text-left">{t("table.command")}</th>
                       <th className="w-[32%] px-4 py-2 text-left">{t("table.description")}</th>
                       <th className="px-4 py-2 text-left">{t("table.example")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
-                    {group.rows.map((r, i) => (
-                      <tr key={i} className="align-top">
-                        <td className="px-4 py-3">
-                          <code className="font-mono text-sm font-semibold text-foreground">
-                            {r.name}
-                          </code>
-                        </td>
-                        <td className="px-4 py-3 text-muted-foreground">
-                          {rowDescription(group.id, r, lang)}
-                        </td>
-                        <td className="px-4 py-3">
-                          <CodeBlock code={r.example} />
-                        </td>
-                      </tr>
-                    ))}
+                    {group.rows.map((r, i) => {
+                      const k = favKey(group.id, r.name);
+                      const fav = isFav(k);
+                      return (
+                        <tr key={i} className="align-top">
+                          <td className="px-2 py-3">
+                            <FavButton active={fav} onClick={() => toggle(k)} />
+                          </td>
+                          <td className="px-4 py-3">
+                            <code className="font-mono text-sm font-semibold text-foreground">
+                              {r.name}
+                            </code>
+                          </td>
+                          <td className="px-4 py-3 text-muted-foreground">
+                            {rowDescription(group.id, r, lang)}
+                          </td>
+                          <td className="px-4 py-3">
+                            <CodeBlock code={r.example} />
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
             </section>
           ))}
+
+          {showFavorites && (
+            <section
+              ref={(el) => {
+                sectionRefs.current[FAVORITES_ID] = el;
+              }}
+            >
+              <div className="mb-3 flex flex-wrap items-center gap-3">
+                <span
+                  className="inline-flex h-6 items-center gap-1 rounded-md border px-2 text-[11px] font-semibold uppercase tracking-wider"
+                  style={{
+                    color: FAV_RED,
+                    background: `color-mix(in oklab, ${FAV_RED} 12%, transparent)`,
+                    borderColor: `color-mix(in oklab, ${FAV_RED} 35%, transparent)`,
+                  }}
+                >
+                  <Heart className="h-3 w-3" fill="currentColor" />
+                  {t("favorites.title")}
+                </span>
+                <span className="text-xs text-muted-foreground">{favoriteRows.length}</span>
+              </div>
+
+              {favoriteRows.length === 0 ? (
+                <div className="rounded-lg border border-dashed border-border bg-card p-8 text-center text-sm text-muted-foreground">
+                  {t("favorites.empty")}
+                </div>
+              ) : (
+                <div className="overflow-hidden rounded-lg border border-border">
+                  <table className="w-full text-sm">
+                    <thead className="bg-secondary/40 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      <tr>
+                        <th className="w-10 px-2 py-2"></th>
+                        <th className="w-[26%] px-4 py-2 text-left">{t("table.command")}</th>
+                        <th className="w-[32%] px-4 py-2 text-left">{t("table.description")}</th>
+                        <th className="px-4 py-2 text-left">{t("table.example")}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {favoriteRows.map(({ group, row }, i) => {
+                        const k = favKey(group.id, row.name);
+                        return (
+                          <tr key={i} className="align-top">
+                            <td className="px-2 py-3">
+                              <FavButton active onClick={() => toggle(k)} />
+                            </td>
+                            <td className="px-4 py-3">
+                              <code className="font-mono text-sm font-semibold text-foreground">
+                                {row.name}
+                              </code>
+                              <div
+                                className="mt-1 inline-flex h-5 items-center rounded border px-1.5 text-[10px] font-semibold uppercase tracking-wider"
+                                style={{
+                                  color: group.color,
+                                  background: group.bg,
+                                  borderColor: `color-mix(in oklab, ${group.color} 35%, transparent)`,
+                                }}
+                              >
+                                {groupLabel(group, lang)}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-muted-foreground">
+                              {rowDescription(group.id, row, lang)}
+                            </td>
+                            <td className="px-4 py-3">
+                              <CodeBlock code={row.example} />
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </section>
+          )}
 
           {showExcel && (
             <section
@@ -236,6 +375,33 @@ function SectionHeader({ group }: { group: SqlGroup }) {
   );
 }
 
+function FavButton({ active, onClick }: { active: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      aria-label={active ? "Remove from favorites" : "Add to favorites"}
+      className={cn(
+        "inline-flex h-7 w-7 items-center justify-center rounded-md border transition",
+        active
+          ? "border-transparent"
+          : "border-border text-muted-foreground hover:text-foreground",
+      )}
+      style={
+        active
+          ? {
+              color: FAV_RED,
+              background: `color-mix(in oklab, ${FAV_RED} 14%, transparent)`,
+            }
+          : undefined
+      }
+    >
+      <Heart className="h-3.5 w-3.5" fill={active ? "currentColor" : "none"} />
+    </button>
+  );
+}
+
 function SidebarLink({
   label,
   color,
@@ -245,6 +411,8 @@ function SidebarLink({
   count,
   bold,
   colorOverride,
+  iconOnly,
+  ariaLabel,
 }: {
   label: string;
   color?: string;
@@ -254,10 +422,13 @@ function SidebarLink({
   count?: number;
   bold?: boolean;
   colorOverride?: string;
+  iconOnly?: boolean;
+  ariaLabel?: string;
 }) {
   return (
     <button
       onClick={onClick}
+      aria-label={ariaLabel}
       className={cn(
         "group flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs uppercase tracking-wider transition",
         bold ? "font-bold" : "font-medium",
@@ -273,7 +444,7 @@ function SidebarLink({
           style={{ background: color ?? "var(--muted-foreground)" }}
         />
       )}
-      <span className="flex-1 truncate">{label}</span>
+      {!iconOnly && <span className="flex-1 truncate">{label}</span>}
       {typeof count === "number" && (
         <span
           className={cn(
@@ -297,19 +468,31 @@ function FilterPill({
   onClick,
   icon,
   variant,
+  count,
+  iconOnly,
+  ariaLabel,
 }: {
   label: string;
   color?: string;
   active: boolean;
   onClick: () => void;
   icon?: React.ReactNode;
-  variant?: "analyzer" | "excel";
+  variant?: "analyzer" | "excel" | "favorites";
+  count?: number;
+  iconOnly?: boolean;
+  ariaLabel?: string;
 }) {
   const c =
-    variant === "analyzer" ? PINK : variant === "excel" ? GOLD : (color ?? "#7d8590");
+    variant === "analyzer"
+      ? PINK
+      : variant === "excel"
+        ? GOLD
+        : variant === "favorites"
+          ? FAV_RED
+          : (color ?? "#7d8590");
 
   let style: React.CSSProperties;
-  if (variant === "analyzer" || variant === "excel") {
+  if (variant === "analyzer" || variant === "excel" || variant === "favorites") {
     style = active
       ? { color: "#000", background: c, borderColor: "#000" }
       : { color: c, background: "transparent", borderColor: c };
@@ -326,11 +509,20 @@ function FilterPill({
   return (
     <button
       onClick={onClick}
-      className="inline-flex h-7 items-center gap-1.5 rounded-full border px-3 text-[11px] font-semibold uppercase tracking-wider transition"
+      aria-label={ariaLabel}
+      className={cn(
+        "inline-flex h-7 items-center gap-1.5 rounded-full border text-[11px] font-semibold uppercase tracking-wider transition",
+        iconOnly ? "px-2" : "px-3",
+      )}
       style={style}
     >
       {icon}
-      {label}
+      {!iconOnly && label}
+      {typeof count === "number" && (
+        <span className="ml-0.5 rounded-full bg-black/15 px-1.5 py-0.5 text-[10px] font-mono tabular-nums">
+          {count}
+        </span>
+      )}
     </button>
   );
 }
