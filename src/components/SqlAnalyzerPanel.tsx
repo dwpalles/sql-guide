@@ -18,6 +18,7 @@ import { useI18n, useT } from "@/i18n";
 import { variantNote, invalidReason } from "@/data/sqlAnalyzerDataI18n";
 import { excelDescription, excelCategory } from "@/data/excelToSqlI18n";
 import { cn } from "@/lib/utils";
+import whyLogo from "@/assets/why_solutions_logo.png";
 
 type StatusKey = "ok" | "warn" | "invalid" | "unknown" | "excel";
 
