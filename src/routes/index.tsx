@@ -46,6 +46,13 @@ function Index() {
             >
               {t("nav.codigos")}
             </Link>
+            {/* SQL tab is mobile-only (<640px). Hidden at sm+. */}
+            <Link
+              to="/sql"
+              className="sm:hidden inline-flex items-center rounded-md px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:bg-secondary hover:text-foreground"
+            >
+              {t("nav.sql")}
+            </Link>
             <Link
               to="/treino"
               className="hidden sm:inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:bg-secondary hover:text-foreground"
