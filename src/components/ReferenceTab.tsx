@@ -50,7 +50,8 @@ export function ReferenceTab() {
       isMobile &&
       filter !== ANALYZER_ID &&
       filter !== EXCEL_ID &&
-      filter !== FAVORITES_ID
+      filter !== FAVORITES_ID &&
+      filter !== ALL_SQL_ID
     ) {
       setFilter(ANALYZER_ID);
     }
@@ -68,10 +69,18 @@ export function ReferenceTab() {
   const showAnalyzer = filter === ANALYZER_ID;
   const showExcel = filter === EXCEL_ID;
   const showFavorites = filter === FAVORITES_ID;
+  const showAllSql = filter === ALL_SQL_ID;
   const visibleGroups =
-    showAnalyzer || showExcel || showFavorites
+    showAnalyzer || showExcel || showFavorites || showAllSql
       ? []
       : sortedGroups.filter((g) => g.id === filter);
+
+  // Flat A→Z list of every command across every group.
+  const allSqlRows: { group: SqlGroup; row: SqlRow }[] = [];
+  for (const g of SQL_GROUPS) {
+    for (const r of g.rows) allSqlRows.push({ group: g, row: r });
+  }
+  allSqlRows.sort((a, b) => a.row.name.localeCompare(b.row.name, "pt-BR"));
 
   // Flat favorites list (across all groups, A→Z by command name).
   const favoriteRows: { group: SqlGroup; row: SqlRow }[] = [];
