@@ -12,11 +12,12 @@ export default defineConfig({
     plugins: [
       VitePWA({
         registerType: "autoUpdate",
-        includeAssets: ["icon-192.png", "icon-512.png", "why_card_dark.png"],
+        injectRegister: null,
+        includeAssets: ["icon-192.png", "icon-512.png", "icon-sql.svg"],
         manifest: {
           name: "SQL.ref — Why Solutions",
           short_name: "SQL.ref",
-          description: "Referência de comandos e funções SQL",
+          description: "Referência de comandos SQL com exemplos e exercícios práticos",
           theme_color: "#121212",
           background_color: "#121212",
           display: "standalone",
@@ -24,22 +25,14 @@ export default defineConfig({
           scope: "/",
           start_url: "/",
           icons: [
-            {
-              src: "icon-192.png",
-              sizes: "192x192",
-              type: "image/png",
-            },
-            {
-              src: "icon-512.png",
-              sizes: "512x512",
-              type: "image/png",
-              purpose: "any maskable",
-            },
+            { src: "icon-192.png", sizes: "192x192", type: "image/png" },
+            { src: "icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
           ],
         },
         workbox: {
           globPatterns: ["**/*.{js,css,html,png,svg,woff2}"],
           maximumFileSizeToCacheInBytes: 3145728,
+          navigateFallback: null,
         },
       }),
     ],
