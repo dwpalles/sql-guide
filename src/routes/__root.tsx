@@ -26,26 +26,8 @@ function NotFoundComponent() {
 
 export const Route = createRootRoute({
   head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "SQL.ref — Why Solutions" },
-      { name: "description", content: "Referência de comandos SQL com exemplos e exercícios práticos" },
-      { name: "author", content: "Why Solutions" },
-      { name: "theme-color", content: "#121212" },
-      { property: "og:title", content: "SQL.ref — Why Solutions" },
-      { property: "og:description", content: "Referência de comandos SQL com exemplos e exercícios práticos" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "SQL.ref — Why Solutions" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/manifest.webmanifest" },
-      { rel: "icon", type: "image/svg+xml", href: "/icon-sql.svg" },
-      { rel: "icon", type: "image/png", sizes: "192x192", href: "/icon-192.png" },
-      { rel: "apple-touch-icon", href: "/icon-512.png" },
-    ],
+    meta: [],
+    links: [{ rel: "stylesheet", href: appCss }],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -58,8 +40,23 @@ export const Route = createRootRoute({
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>SQL.ref — Why Solutions</title>
+        <meta name="description" content="Referência de comandos SQL com exemplos e exercícios práticos" />
+        <meta name="author" content="Why Solutions" />
+        <meta name="theme-color" content="#121212" />
+        <meta property="og:title" content="SQL.ref — Why Solutions" />
+        <meta property="og:description" content="Referência de comandos SQL com exemplos e exercícios práticos" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="SQL.ref — Why Solutions" />
+        <link rel="manifest" href="/manifest.webmanifest" />
+        <link rel="icon" type="image/svg+xml" href="/icon-sql.svg" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+        <link rel="apple-touch-icon" href="/icon-512.png" />
         <HeadContent />
         <script
           dangerouslySetInnerHTML={{

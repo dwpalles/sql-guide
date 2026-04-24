@@ -1,0 +1,16 @@
+{
+  "name": "SQL.ref — Why Solutions",
+  "short_name": "SQL.ref",
+  "description": "Referência de comandos SQL com exemplos e exercícios práticos",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
