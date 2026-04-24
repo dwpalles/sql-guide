@@ -152,8 +152,9 @@ export function ReferenceTab() {
       </aside>
 
       <div className="min-w-0">
+        <div className="sticky top-0 z-40 -mx-4 px-4 py-2 bg-[#0d1117]">
         {/* Linha 1: Favoritos (♥) + Schema E-commerce */}
-        <div className="mb-4 flex flex-wrap items-center gap-2 lg:justify-end">
+        <div className="mb-2 flex flex-wrap items-center gap-2 lg:justify-end">
           <div className="lg:hidden">
             <FilterPill
               label=""
@@ -181,10 +182,8 @@ export function ReferenceTab() {
           </button>
         </div>
 
-        {schemaOpen && <SchemaPanel />}
-
         {/* Linha 2: SQL Doctor + Excel → SQL (+ pills de categorias em sm+) */}
-        <div className="mb-5 flex flex-wrap gap-1.5 lg:hidden">
+        <div className="mb-2 flex flex-wrap gap-1.5 lg:hidden">
           <FilterPill
             label={t("sidebar.sqlDoctor")}
             icon={<Activity className="h-3 w-3" />}
@@ -220,6 +219,9 @@ export function ReferenceTab() {
               />
             ))}
         </div>
+        </div>
+
+        {schemaOpen && <SchemaPanel />}
 
         <div className="space-y-8">
           {visibleGroups.map((group) => (
