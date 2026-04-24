@@ -221,6 +221,8 @@ export function ReferenceTab() {
         </div>
         </div>
 
+        {schemaOpen && <SchemaPanel />}
+
         <div className="space-y-8">
           {visibleGroups.map((group) => (
             <section
