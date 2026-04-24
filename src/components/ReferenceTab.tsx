@@ -221,6 +221,7 @@ export function ReferenceTab() {
               />
             ))}
         </div>
+        </div>
 
         <div className="space-y-8">
           {visibleGroups.map((group) => (
