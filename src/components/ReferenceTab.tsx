@@ -152,8 +152,9 @@ export function ReferenceTab() {
       </aside>
 
       <div className="min-w-0">
+        <div className="sticky top-0 z-40 -mx-4 px-4 py-2 bg-[#0d1117]">
         {/* Linha 1: Favoritos (♥) + Schema E-commerce */}
-        <div className="mb-4 flex flex-wrap items-center gap-2 lg:justify-end">
+        <div className="mb-2 flex flex-wrap items-center gap-2 lg:justify-end">
           <div className="lg:hidden">
             <FilterPill
               label=""
