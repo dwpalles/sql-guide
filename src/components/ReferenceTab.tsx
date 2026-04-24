@@ -182,10 +182,8 @@ export function ReferenceTab() {
           </button>
         </div>
 
-        {schemaOpen && <SchemaPanel />}
-
         {/* Linha 2: SQL Doctor + Excel → SQL (+ pills de categorias em sm+) */}
-        <div className="mb-5 flex flex-wrap gap-1.5 lg:hidden">
+        <div className="mb-2 flex flex-wrap gap-1.5 lg:hidden">
           <FilterPill
             label={t("sidebar.sqlDoctor")}
             icon={<Activity className="h-3 w-3" />}
